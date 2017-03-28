@@ -11,6 +11,7 @@ import com.example.card.service.CardTypeService;
 import com.example.card.service.CustomerService;
 import com.example.card.utils.ExcelUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.enums.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,8 @@ public class FileUploadController {
         String fileName = file.getOriginalFilename();
         logger.info("upload file name is :   " + fileName);
 
-        // 獲取後綴
+        // 获取文件后缀名
+
         String stuffixName = fileName.substring(fileName.lastIndexOf("."));
         logger.info("upload stuffix name is :  " + stuffixName);
 
@@ -103,7 +105,7 @@ public class FileUploadController {
 
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             result.setResultCode(ResultCode.EXCEPTION);
             result.setData(e.getMessage());
@@ -115,8 +117,10 @@ public class FileUploadController {
 
     private void checkState(Object stateName, int colIndex, Card card, StringBuilder errorTextBuilder) {
         CardState cardState = null;
-        if (stateName != null) {
-            cardState = CardState.valueOf(stateName.toString());
+        if (stateName != null && "" != stateName.toString()) {
+
+
+            cardState = CardState.getByValue(stateName.toString());
             if (cardState != null) {
                 card.setState(cardState.getKey());
             } else {

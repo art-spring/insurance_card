@@ -2,6 +2,7 @@ package com.example.card.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author caichunyi
  * @since 2017-03-13
  */
-@Controller
+@RestController
 @RequestMapping("/shop")
 public class ShopController {
 	

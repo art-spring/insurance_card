@@ -30,7 +30,7 @@ public class CardTypeController {
     @Autowired
     private CardTypeService cardTypeService;
 
-    @RequestMapping(value = "getAll.do", method = RequestMethod.GET)
+    @RequestMapping(value = "getAll", method = RequestMethod.GET)
     public JSONResult<List<CardType>> getAll() {
         JSONResult<List<CardType>> result = new JSONResult<>();
         result.setData(this.cardTypeService.selectList(new EntityWrapper<>(null)));

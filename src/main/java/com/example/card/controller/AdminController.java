@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.card.entity.Admin;
 import com.example.card.result.JSONResult;
 import org.springframework.boot.autoconfigure.web.WebMvcProperties;
+import org.springframework.core.Conventions;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,7 +27,7 @@ import javax.validation.constraints.Size;
 public class AdminController {
 
 
-    @RequestMapping(value = "login.do", method = RequestMethod.POST)
+    @PostMapping(value = "login")
     public ModelAndView login(@NotNull @Size(min = 6, max = 20, message = "6-20") @RequestParam String loginName, @NotNull @RequestParam String password, HttpSession httpSession) {
         JSONResult<Boolean> result = new JSONResult<>();
 
@@ -51,7 +50,7 @@ public class AdminController {
         return new WebMvcProperties.View();
     }
 
-    @RequestMapping(value = "/logout.do", method = RequestMethod.GET)
+    @GetMapping(value = "/logout.do")
     public ModelAndView logout(HttpSession session) {
 
         session.removeAttribute("user");
@@ -65,6 +64,8 @@ public class AdminController {
 
         return new ModelAndView(new RedirectView("/admin.html"));
     }
+
+
 
 
 }
