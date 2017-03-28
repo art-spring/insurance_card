@@ -15,5 +15,16 @@ import java.util.Map;
  */
 public interface AgentService extends IService<Agent> {
     Map<String, Integer> getNameIdMap();
-	
+
+    /**
+     * 添加代理商对象，如果phone存在则返回false
+     * @param agent
+     * @return
+     */
+    boolean createByManager(Agent agent);
+
+
+
+
+
 }

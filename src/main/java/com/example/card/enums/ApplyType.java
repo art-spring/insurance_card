@@ -3,5 +3,15 @@ package com.example.card.enums;
 /**
  * Created by caichunyi on 2017/3/17.
  */
-public class ApplyType {
+public enum ApplyType {
+    DEFAULT(0);
+    private int key;
+
+    ApplyType(int key) {
+        this.key = key;
+    }
+
+    public int getKey() {
+        return key;
+    }
 }

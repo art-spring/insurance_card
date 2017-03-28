@@ -3,6 +3,9 @@ package com.example.card.entity;
 import com.baomidou.mybatisplus.activerecord.Model;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.enums.IdType;
+
 import java.io.Serializable;
 
 
@@ -18,6 +21,7 @@ public class Card extends Model<Card> {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "id",type = IdType.INPUT)
 	private Integer id;
 	private String password;
 	private Integer type;

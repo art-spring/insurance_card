@@ -27,7 +27,8 @@ public class MPGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D:\\projects\\study\\java\\insurance-card\\src\\main\\java");
+        gc.setOutputDir("D:\\");
+//        gc.setOutputDir("D:\\projects\\study\\java\\insurance-card\\src\\main\\java");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);
         gc.setEnableCache(false);// XML 二级缓存
@@ -57,7 +58,7 @@ public class MPGenerator {
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("root");
-        dsc.setUrl("jdbc:mysql://192.168.103.35:3306/insurance_card?useUnicode=true&characterEncoding=utf8");
+        dsc.setUrl("jdbc:mysql://192.168.103.116:3306/insurance_card?useUnicode=true&characterEncoding=utf8");
         mpg.setDataSource(dsc);
 
         // 策略配置

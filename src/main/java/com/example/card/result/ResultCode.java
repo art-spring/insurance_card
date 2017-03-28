@@ -9,7 +9,8 @@ public enum ResultCode {
     EXCEPTION(3,"异常"),
     EMPTY_FILE(4,"上傳文件未空"),
     SESSION_NOT_EXISTS(5,"session 不存在"),
-    CARD_DATA_ERROP(6,"导入的卡片数据有误");
+    CARD_DATA_ERROP(6,"导入的卡片数据有误"),
+    PARAMS_IS_NULL(7,"参数为空");
 
     private int key;
     private  String value;

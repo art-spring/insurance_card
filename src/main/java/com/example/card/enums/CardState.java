@@ -16,6 +16,33 @@ public enum CardState {
         this.value = value;
     }
 
+    public static boolean contains(String value) {
+
+        boolean result = false;
+        for (CardState state : CardState.values()) {
+            if (state.value.equals(value)) {
+                result = true;
+                break;
+            }
+
+        }
+        return result;
+
+    }
+
+    public static CardState getByValue(String value) {
+
+        CardState state = null;
+        for (CardState cardState : CardState.values()) {
+            if (cardState.value.equals(value)) {
+                state = cardState;
+                break;
+            }
+        }
+
+        return state;
+    }
+
     public int getKey() {
         return key;
     }
@@ -23,4 +50,6 @@ public enum CardState {
     public String getValue() {
         return value;
     }
+
+
 }

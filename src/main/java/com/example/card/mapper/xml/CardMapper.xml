@@ -40,7 +40,7 @@
 		FROM card c
 		left join card_type cy on cy.id = c.type
 		left join agent a on a.id = c.agent_id
-		left join customer cs on cs.id = cy.customer_id
+		left join customer cs on cs.id = c.customer_id
 		WHERE 1=1
 		<if test="state != null">
 			AND c.state =#{state}

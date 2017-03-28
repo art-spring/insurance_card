@@ -18,6 +18,7 @@ public class Agent extends Model<Agent> {
 
     private static final long serialVersionUID = 1L;
 
+
 	private Integer id;
 	@TableField("wx_id")
 	private String wxId;

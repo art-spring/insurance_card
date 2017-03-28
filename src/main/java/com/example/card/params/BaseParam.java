@@ -3,5 +3,8 @@ package com.example.card.params;
 /**
  * Created by caichunyi on 2017/3/28.
  */
-public class BaseParam {
+public abstract class BaseParam {
+
+    private int startIndex;
+    private int length;
 }
