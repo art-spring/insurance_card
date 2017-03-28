@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员登录</title>
+</head>
+<body>
+
+<div>
+    <form name="myform" id="myform" action="/admin/login.do" method="post">
+        <span>管理员登录：</span> <input type="text" name="loginName"/>
+        <br>
+        <span>密码：</span><input type="password" name="password"/>
+        <br>
+        <input type="submit" id="jqueryBtn" value="登录普通提交"/>
+        <input type="button" id="ajaxBtn" value="登录ajax提交">
+    </form>
+    <script type="text/javascript">
+
+//        $(function() {
+//            //ajax提交
+//            $("#ajaxBtn").click(function() {
+//                var params = $("#myform").serialize();
+//                $.ajax( {
+//                    type : "POST",
+//                    url : "RegisterAction.action",
+//                    data : params,
+//                    success : function(msg) {
+//                        alert("success: " + msg);
+//                    }
+//                });
+//            })
+////
+////            //jQuery提交
+////            $("#jqueryBtn").click(function(){
+////                $("#myform").submit();
+////            })
+////
+////            //js提交
+////            $("#jsBtn").click(function(){
+////                document.myform.action="RegisterAction.action";
+////                document.myform.submit();
+////            })
+//
+//        })
+//        function sumbitTest(){
+//            return true; //return false则不会提交
+//        }
+
+    </script>
+
+</div>
+</body>
+</html>

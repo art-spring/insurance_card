@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>卡片管理</title>
+</head>
+<body>
+
+<div>
+    卡片信息：<br>
+    <div>
+        总数：<label id="total"></label><br>
+        激活数：<label id="total"></label><br>
+        使用数：<label id="total"></label><br>
+    </div>
+    <div>
+       卡类型： <input type="button" id="chk" onclick="loadCardType()">
+    </div>
+<form id="quitform" action="/admin/logout.do" method="get">
+    <input type="submit" value="退出">
+</form>
+</div>
+
+<script type="javascript">
+    function loadCardType() {
+        $.ajax({
+            url:"/cardtype/getall",
+            type:"get",
+            dataType:"json",
+            success:function (result) {
+                if(result.code == 0){
+                    alert(result.data);
+                }else {
+                    alert(result)
+                }
+
+            }
+        })
+
+    }
+</script>
+
+<script type="text/javascript" >
+    $(function () {
+        alert("exec request")
+        $.ajax({
+                url: "/card/getStaticInfo",
+                dataType: "json",
+                success: function (data) {
+                    alert(data)
+
+                }
+            }
+        )
+
+    })
+</script>
+</body>
+
+
+</html>

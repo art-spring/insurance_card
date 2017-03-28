@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.card.mapper.CustomerMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.example.card.entity.Customer">
+		<id column="id" property="id" />
+		<result column="id_number" property="idNumber" />
+		<result column="wx_id" property="wxId" />
+		<result column="phone_number" property="phoneNumber" />
+		<result column="name" property="name" />
+		<result column="nick_name" property="nickName" />
+		<result column="address" property="address" />
+		<result column="bind_state" property="bindState" />
+		<result column="bind_time" property="bindTime" />
+		<result column="unbind_time" property="unbindTime" />
+	</resultMap>
+
+</mapper>
