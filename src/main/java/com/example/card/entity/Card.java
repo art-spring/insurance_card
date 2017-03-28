@@ -23,6 +23,8 @@ public class Card extends Model<Card> {
 
     @TableId(value = "id",type = IdType.INPUT)
 	private Integer id;
+	@TableField("card_no")
+	private String cardNo;
 	private String password;
 	private Integer type;
 	private Integer state;
@@ -43,6 +45,14 @@ public class Card extends Model<Card> {
 	public Card setId(Integer id) {
 		this.id = id;
 		return this;
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
 	}
 
 	public String getPassword() {

@@ -8,12 +8,13 @@ import java.util.Date;
 public class CardInfoModel {
 
     private String id;
+    private String cardNo;
     private String password;
     private int status;
     private int type;
     private String typeName;
     private Integer agentId;
-    private  String agentName;
+    private String agentName;
     private Integer customerId;
     private String customerName;
     private Date activeTime;
@@ -25,6 +26,14 @@ public class CardInfoModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
     }
 
     public String getPassword() {
