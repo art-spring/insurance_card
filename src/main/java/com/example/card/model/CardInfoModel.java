@@ -1,5 +1,9 @@
 package com.example.card.model;
 
+import com.example.card.utils.DateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jdk.Exported;
+
 import java.util.Date;
 
 /**
@@ -7,24 +11,26 @@ import java.util.Date;
  */
 public class CardInfoModel {
 
-    private String id;
+    private Integer id;
     private String cardNo;
     private String password;
-    private int status;
-    private int type;
+    private Integer status;
+    private Integer type;
     private String typeName;
     private Integer agentId;
     private String agentName;
     private Integer customerId;
     private String customerName;
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date activeTime;
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date usedTime;
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -44,19 +50,19 @@ public class CardInfoModel {
         this.password = password;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -68,7 +74,7 @@ public class CardInfoModel {
         this.typeName = typeName;
     }
 
-    public int getAgentId() {
+    public Integer getAgentId() {
         return agentId;
     }
 
@@ -84,7 +90,7 @@ public class CardInfoModel {
         this.agentName = agentName;
     }
 
-    public int getCustomerId() {
+    public Integer getCustomerId() {
         return customerId;
     }
 
