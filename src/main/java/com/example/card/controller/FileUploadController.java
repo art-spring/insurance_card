@@ -97,7 +97,7 @@ public class FileUploadController {
 
                 }
                 if (totalBuilder.length() > 0) {
-                    result.setResultCode(ResultCode.CARD_DATA_ERROP);
+                    result.setResultCode(ResultCode.CARD_DATA_ERROR);
                     result.setData(totalBuilder.toString());
                 } else {
                     this.cardService.insertBatch(cards);
