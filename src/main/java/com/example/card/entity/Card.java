@@ -27,7 +27,7 @@ public class Card extends Model<Card> {
 	private String cardNo;
 	private String password;
 	private Integer type;
-	private Integer state;
+	private Integer status;
 	@TableField("agent_id")
 	private Integer agentId;
 	@TableField("customer_id")
@@ -73,12 +73,12 @@ public class Card extends Model<Card> {
 		return this;
 	}
 
-	public Integer getState() {
-		return state;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public Card setState(Integer state) {
-		this.state = state;
+	public Card setStatus(Integer status) {
+		this.status = status;
 		return this;
 	}
 

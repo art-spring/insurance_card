@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
  * @author caichunyi
  * @since 2017-03-13
  */
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/card")
 public class CardController {
@@ -37,15 +39,11 @@ public class CardController {
         return result;
     }
 
-    @PostMapping(value = "/search")
-    public JSONResult<Page<CardInfoModel>> search(CardSearchParam param) {
-        JSONResult<Page<CardInfoModel>> result = new JSONResult<>();
-
-//
-//        Page<CardInfoModel> page = new Page<>();
-//        List<CardInfoModel> models = this.cardService.search(param);
-//        result.setData(models);
-
+    @PostMapping(value = "/select")
+    public JSONResult<List<CardInfoModel>> select(@RequestBody CardSearchParam param) {
+        JSONResult<List<CardInfoModel>> result = new JSONResult<>();
+        List<CardInfoModel> models = this.cardService.search(param);
+        result.setData(models);
         return result;
     }
 
@@ -62,7 +60,7 @@ public class CardController {
         JSONResult<String> result = new JSONResult<>();
 
         List<Card> cards = new ArrayList<>();
-        Card card ;
+        Card card;
         for (int id : ids) {
             card = new Card();
             card.setId(id);

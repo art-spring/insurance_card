@@ -11,7 +11,6 @@ import com.example.card.service.CardTypeService;
 import com.example.card.service.CustomerService;
 import com.example.card.utils.ExcelUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.enums.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -122,12 +120,12 @@ public class FileUploadController {
 
             cardState = CardState.getByValue(stateName.toString());
             if (cardState != null) {
-                card.setState(cardState.getKey());
+                card.setStatus(cardState.getKey());
             } else {
                 errorTextBuilder.append(generateColErrorInfo(colIndex, "卡片状态错误！"));
             }
         } else {
-            card.setState(CardState.UN_USE.getKey());
+            card.setStatus(CardState.UN_USE.getKey());
         }
 
 

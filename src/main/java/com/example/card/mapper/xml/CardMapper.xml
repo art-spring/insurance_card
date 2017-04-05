@@ -8,7 +8,7 @@
 		<result column="card_no" property="cardNo" />
 		<result column="password" property="password" />
 		<result column="type" property="type" />
-		<result column="state" property="state" />
+		<result column="status" property="status" />
 		<result column="agent_id" property="agentId" />
 		<result column="customer_id" property="customerId" />
 		<result column="active_time" property="activeTime" />
@@ -30,7 +30,7 @@
 		c.id ,
 		c.card_no as cardNo,
 		c.password,
-		c.state,
+		c.status,
 		c.type,
 		cy.name as typeName,
 		a.id as agentId,
@@ -44,8 +44,11 @@
 		left join agent a on a.id = c.agent_id
 		left join customer cs on cs.id = c.customer_id
 		WHERE 1=1
-		<if test="state != null">
-			AND c.state =#{state}
+		<if test="status != null">
+			AND c.status =#{status}
+		</if>
+		<if test="type != null">
+			AND c.type =#{type}
 		</if>
 		<if test="keyword !=null">
 
@@ -53,12 +56,13 @@
 		<if test="agentName != null">
 			AND a.name = #{agentName}
 		</if>
-		<if test="startTime !=null">
-			AND <![CDATA[c.active_time >=#{startTime} ]]>
+		<if test="applyDateBegin !=null">
+			AND <![CDATA[c.active_time >=#{applyDateBegin} ]]>
 		</if>
-		<if test="endTime !=null">
-			AND <![CDATA[c.active_time <=#{endTime} ]]>
+		<if test="applyDateEnd !=null">
+			AND <![CDATA[c.active_time <=#{applyDateEnd} ]]>
 		</if>
+        LIMIT ${(page-1)*pageSize},${pageSize}
 	</select>
 
 </mapper>
