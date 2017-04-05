@@ -78,7 +78,7 @@ public class FileUploadController {
                     Map<String, Integer> customerMap = this.customerService.getNameIdMap();
                     Map<String, Integer> cardTypeMap = this.cardTypeService.getNameIdMap();
                     int j = 0;
-                    this.checkId(row[j], ++j, card, errorTextBuilder);
+                    this.checkNumber(row[j], ++j, card, errorTextBuilder);
                     this.checkPassword(row[j], ++j, card, errorTextBuilder);
                     this.checkAgent(row[j], ++j, card, errorTextBuilder, agentMap);
                     this.checkCustomer(row[j], ++j, card, errorTextBuilder, customerMap);
@@ -164,10 +164,10 @@ public class FileUploadController {
         return String.format("第%d列问题：%s;", colNum, errorText);
     }
 
-    private void checkId(Object value, int colIndex, Card card, StringBuilder errorTextBuilder) {
+    private void checkNumber(Object value, int colIndex, Card card, StringBuilder errorTextBuilder) {
 
-        if (value instanceof Integer) {
-            card.setId(Integer.parseInt(value.toString()));
+        if (value instanceof String) {
+            card.setCardNo(value.toString());
             int count = this.cardService.selectCount(new EntityWrapper<>(card));
             if (count > 0) {
                 errorTextBuilder.append(generateColErrorInfo(colIndex, "该卡号已存在！"));
