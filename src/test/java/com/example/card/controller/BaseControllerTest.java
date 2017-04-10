@@ -40,6 +40,7 @@ public abstract class BaseControllerTest {
         this.result = this.mvc.perform(builder).andReturn();
         this.mockHttpSession = (MockHttpSession) this.result.getRequest().getSession();
         System.out.println(this.result.getResponse().getContentAsString());
+        System.out.println("session_id:" + this.mockHttpSession.getId());
 
     }
 

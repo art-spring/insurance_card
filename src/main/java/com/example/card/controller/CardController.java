@@ -3,6 +3,7 @@ package com.example.card.controller;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
+import com.example.card.interceptor.Auth;
 import com.example.card.model.CardInfoModel;
 import com.example.card.params.CardSearchParam;
 import com.example.card.result.JSONResult;
@@ -27,6 +28,7 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/card")
+@Auth
 public class CardController {
 
     @Autowired

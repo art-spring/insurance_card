@@ -12,8 +12,8 @@ import java.util.Date;
  */
 public class CardSearchParam {
 
-    private Integer page;
-    private Integer pageSize;
+    private Integer page = 1;
+    private Integer pageSize = 10;
     private Integer status;
     private String agentName;
     private String keyword;

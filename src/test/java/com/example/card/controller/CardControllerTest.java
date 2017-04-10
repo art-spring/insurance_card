@@ -1,30 +1,38 @@
 package com.example.card.controller;
 
-import org.junit.Before;
+import com.alibaba.fastjson.JSONObject;
+import com.example.card.params.CardSearchParam;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Base64;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by caichunyi on 2017/3/23.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-public class CardControllerTest {
+
+public class CardControllerTest extends BaseControllerTest {
+    @Test
+    public void select() throws Exception {
+        this.injectSession();
+        CardSearchParam param = new CardSearchParam();
+        param.setStatus(1);
+        String json = JSONObject.toJSONString(param);
+        RequestBuilder request = MockMvcRequestBuilders.post("/card/select").session(this.mockHttpSession).contentType(MediaType.APPLICATION_JSON).content(json);
+        result = mvc.perform(request).andReturn();
+
+
+
+        System.out.println("result:" + result.getResponse().getContentAsString());
+    }
+
     @Test
     public void test1() throws Exception {
 
@@ -38,15 +46,7 @@ public class CardControllerTest {
     }
 
 
-    @Autowired
-    private MockMvc mvc;
-    private MvcResult result;
 
-
-    @Test
-    public void getStaticInfo() throws Exception {
-
-    }
 
     @Test
     public void search() throws Exception {
