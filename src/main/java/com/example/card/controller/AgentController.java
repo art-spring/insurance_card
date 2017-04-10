@@ -58,10 +58,11 @@ public class AgentController {
     }
 
 
-    @PostMapping("/search")
-    public JSONResult<List<Agent>> search(@NotNull AgentSearchParam param) {
+    @PostMapping("/select")
+    public JSONResult<List<Agent>> search(@RequestBody AgentSearchParam param) {
         JSONResult<List<Agent>> result = new JSONResult<>();
-
+//        List<Agent> models = this.agentService.search(param);
+//        result.setData(models);
 
         return result;
     }

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Date;
 
 /**
- * Created by caichunyi on 2017/3/28.
+ * Created by racoon on 2017/4/10.
  */
-public class AgentSearchParam {
+public class JoininSearchParam {
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date applyDateBegin;
     @JsonDeserialize(using = DateJsonDeserializer.class)
