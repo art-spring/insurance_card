@@ -25,6 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CardControllerTest {
+    @Test
+    public void test1() throws Exception {
+
+        RequestBuilder request = MockMvcRequestBuilders.post("/card/test");
+        result = mvc.perform(request).andReturn();
+
+
+
+        System.out.println("result" + result.getResponse().getContentAsString());
+
+    }
 
 
     @Autowired

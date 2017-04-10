@@ -26,6 +26,7 @@ import java.util.List;
  * @author caichunyi
  * @since 2017-03-13
  */
+@CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
 @RequestMapping("/agent")
 public class AgentController {

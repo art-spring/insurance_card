@@ -34,8 +34,8 @@ public class Card extends Model<Card> {
 	private Integer customerId;
 	@TableField("active_time")
 	private Date activeTime;
-	@TableField("use_time")
-	private Date useTime;
+	@TableField("used_time")
+	private Date usedTime;
 
 
 	public Integer getId() {
@@ -109,12 +109,12 @@ public class Card extends Model<Card> {
 		return this;
 	}
 
-	public Date getUseTime() {
-		return useTime;
+	public Date getUsedTime() {
+		return usedTime;
 	}
 
-	public Card setUseTime(Date useTime) {
-		this.useTime = useTime;
+	public Card setUsedTime(Date usedTime) {
+		this.usedTime = usedTime;
 		return this;
 	}
 

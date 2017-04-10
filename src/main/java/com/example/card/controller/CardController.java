@@ -47,6 +47,15 @@ public class CardController {
         return result;
     }
 
+    @PostMapping(value = "/test")
+    public JSONResult<Page<Card>> test() {
+        JSONResult<Page<Card>> result = new JSONResult<>();
+        Page<Card> page = new Page<>();
+        result.setData(this.cardService.selectPage(page, null));
+        result.getData().getTotal();
+        return result;
+    }
+
     @PostMapping("/getDetail")
     public JSONResult<Card> getDetail(int id) {
         JSONResult<Card> result = new JSONResult<>();
