@@ -21,5 +21,6 @@ public interface CardService extends IService<Card> {
     CardStaticInfo getStaticInfo();
 
     List<CardInfoModel> search(@NotNull CardSearchParam param);
-	
+
+    boolean create(Card newCard);
 }

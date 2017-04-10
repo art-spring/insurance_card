@@ -25,8 +25,11 @@ public class Card extends Model<Card> {
 	private Integer id;
 	@TableField("card_no")
 	private String cardNo;
+	@TableField("password")
 	private String password;
+	@TableField("type")
 	private Integer type;
+	@TableField("status")
 	private Integer status;
 	@TableField("agent_id")
 	private Integer agentId;

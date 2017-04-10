@@ -35,7 +35,7 @@ public class AdminController {
 
 
     @PostMapping(value = "login")
-    public JSONResult<String> login(@NotNull Admin admin, HttpSession httpSession) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public JSONResult<String> login(@RequestBody Admin admin, HttpSession httpSession) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         JSONResult<String> result = new JSONResult<>();
 
         if (StringUtils.isEmpty(admin.getLoginName()) || StringUtils.isEmpty(admin.getPassword())) {

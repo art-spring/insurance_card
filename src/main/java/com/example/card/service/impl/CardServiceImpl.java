@@ -34,7 +34,20 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
 
     @Override
     public List<CardInfoModel> search(CardSearchParam param) {
-
         return this.cardMapper.search(param);
+    }
+
+    @Override
+    public boolean create(Card newCard) {
+        Card param = new Card();
+        param.setCardNo(newCard.getCardNo());
+        Card searchEntity = this.cardMapper.selectOne(param);
+        if (searchEntity == null) {
+            newCard.setStatus(0);
+            newCard.insert();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
