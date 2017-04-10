@@ -29,12 +29,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
 
-        System.out.println("inter interceptor!!!!");
 
         if (!handler.getClass().isAssignableFrom(HandlerMethod.class)) {
             return true;
         }
-        this.handlerSession(request);
         final HandlerMethod handlerMethod = (HandlerMethod) handler;
         final Method method = handlerMethod.getMethod();
         final Class<?> clazz = method.getDeclaringClass();
@@ -60,7 +58,4 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     }
 
-    public void handlerSession(HttpServletRequest request) {
-
-    }
 }
