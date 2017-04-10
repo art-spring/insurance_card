@@ -1,5 +1,6 @@
 package com.example.card.controller;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
 import com.example.card.model.CardInfoModel;
@@ -31,7 +32,7 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-    @GetMapping(value = "getStaticInfo")
+    @GetMapping(value = "/getStaticInfo")
     public JSONResult<CardStaticInfo> getStaticInfo() {
         JSONResult<CardStaticInfo> result = new JSONResult<>();
         result.setData(this.cardService.getStaticInfo());

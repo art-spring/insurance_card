@@ -34,7 +34,7 @@ import java.security.NoSuchAlgorithmException;
 public class AdminController {
 
 
-    @PostMapping(value = "login")
+    @PostMapping(value = "/login")
     public JSONResult<String> login(@RequestBody Admin admin, HttpSession httpSession) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         JSONResult<String> result = new JSONResult<>();
 
@@ -59,7 +59,7 @@ public class AdminController {
         return new WebMvcProperties.View();
     }
 
-    @GetMapping(value = "logout")
+    @GetMapping(value = "/logout")
     @Auth
     public JSONResult<String> logout(HttpSession session) {
 

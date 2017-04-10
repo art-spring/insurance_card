@@ -3,6 +3,7 @@ package com.example.card.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.card.entity.Agent;
 import com.example.card.enums.BindState;
+import com.example.card.interceptor.Auth;
 import com.example.card.params.AgentSearchParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
@@ -26,7 +27,7 @@ import java.util.List;
  * @author caichunyi
  * @since 2017-03-13
  */
-@CrossOrigin(origins = "*",maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/agent")
 public class AgentController {
@@ -35,7 +36,8 @@ public class AgentController {
     private AgentService agentService;
 
     @PostMapping(value = "/add")
-    public JSONResult<String> add(@NotNull Agent agent) {
+    @Auth
+    public JSONResult<String> add(@NotNull @RequestBody Agent agent) {
         JSONResult<String> result = new JSONResult<>();
 
         if (StringUtils.isEmpty(agent.getName())) {
@@ -60,7 +62,8 @@ public class AgentController {
 
 
     @PostMapping("/search")
-    public JSONResult<List<Agent>> search(@NotNull AgentSearchParam param) {
+    @Auth
+    public JSONResult<List<Agent>> search(@NotNull @RequestBody AgentSearchParam param) {
         JSONResult<List<Agent>> result = new JSONResult<>();
 
 
@@ -68,7 +71,8 @@ public class AgentController {
     }
 
     @PostMapping("/accept")
-    public JSONResult<String> accept(int id) {
+    @Auth
+    public JSONResult<String> accept(@RequestBody int id) {
         JSONResult<String> result = new JSONResult<>();
         Agent agent = new Agent();
         agent.setId(id);
@@ -78,8 +82,10 @@ public class AgentController {
         return result;
 
     }
+
     @PostMapping("/remove")
-    public JSONResult<String> remove(int id){
+    @Auth
+    public JSONResult<String> remove(@RequestBody int id) {
 
         JSONResult<String> result = new JSONResult<>();
         Agent agent = new Agent();
