@@ -24,12 +24,11 @@ public class ServletContextConfig extends WebMvcConfigurationSupport {
     private static final String PROPERTY_APP_ENV = "application.environment";
     private static final String PROPERTY_DEFAULT_ENV = "dev";
 
-
-    @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-
-        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**").excludePathPatterns(FAVICON_URL);
-    }
+//    @Override
+//    protected void addInterceptors(InterceptorRegistry registry) {
+//
+//        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**").excludePathPatterns(FAVICON_URL);
+//    }
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {

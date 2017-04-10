@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author caichunyi
  * @since 2017-03-13
  */
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
