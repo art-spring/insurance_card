@@ -12,7 +12,7 @@
 		<result column="agent_id" property="agentId" />
 		<result column="customer_id" property="customerId" />
 		<result column="active_time" property="activeTime" />
-		<result column="use_time" property="useTime" />
+		<result column="used_time" property="usedTime" />
 	</resultMap>
 
 	<select id="selectStaticInfo" resultType="com.example.card.entity.CardStaticInfo">

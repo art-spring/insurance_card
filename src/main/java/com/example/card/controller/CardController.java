@@ -1,18 +1,18 @@
 package com.example.card.controller;
 
-import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
 import com.example.card.model.CardInfoModel;
 import com.example.card.params.CardSearchParam;
 import com.example.card.result.JSONResult;
+import com.example.card.result.ResultCode;
 import com.example.card.service.CardService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -72,5 +72,54 @@ public class CardController {
         return result;
     }
 
+    @PostMapping(value = "/insert")
+    public JSONResult<Card> insert(@RequestBody Card card) {
+        JSONResult<Card> result = new JSONResult<>();
+
+        if (StringUtils.isEmpty(card.getCardNo())) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        if (StringUtils.isEmpty(card.getPassword())) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        boolean addResult = this.cardService.create(card);
+        if (!addResult) {
+            result.setResultCode(ResultCode.FAILD);
+            result.setData(null);
+        }
+        result.setData(card);
+        return result;
+    }
+
+    @GetMapping(value = "/delete")
+    public JSONResult<Integer> delete(@RequestParam("keys") String ids) {
+        JSONResult<Integer> result = new JSONResult<>();
+        List<String> cardIds = Arrays.asList(ids.split(","));
+        if (!this.cardService.deleteBatchIds(cardIds)){
+            result.setResultCode(ResultCode.FAILD);
+        }else{
+            result.setData(cardIds.size());
+        }
+        return result;
+    }
+
+    @PostMapping(value = "/update")
+    public JSONResult<Card> update(@RequestParam("keys") String id,@RequestBody Card updateInfo) {
+        JSONResult<Card> result = new JSONResult<>();
+        Card oldCardInfo = this.cardService.selectById(id);
+        if (oldCardInfo!=null){
+            oldCardInfo.setCardNo(updateInfo.getCardNo());
+            oldCardInfo.setPassword(updateInfo.getPassword());
+            oldCardInfo.setType(updateInfo.getType());
+            if (!oldCardInfo.updateById()){
+                result.setResultCode(ResultCode.FAILD);
+            }
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
 
 }

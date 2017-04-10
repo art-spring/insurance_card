@@ -205,7 +205,7 @@ public class FileUploadController {
     private void checkUseDate(Object value, int colIndex, Card card, StringBuilder errorTextBuilder) {
         if (value != null) {
             if (value instanceof Date) {
-                card.setUseTime((Date) value);
+                card.setUsedTime((Date) value);
             } else {
                 errorTextBuilder.append(generateColErrorInfo(colIndex, "使用时间类型错误！"));
             }
