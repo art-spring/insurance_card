@@ -5,8 +5,10 @@ import com.example.card.entity.Customer;
 import com.example.card.mapper.CustomerMapper;
 import com.example.card.service.CustomerService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 @Service
 public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> implements CustomerService {
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
     public Map<String, Integer> getNameIdMap() {
@@ -32,4 +36,26 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
 
         return customerMap;
     }
+
+    @Override
+    public boolean bindWechat(Customer customer) {
+        Customer oldCustomer = customerMapper.selectById(customer.getId());
+        if (oldCustomer == null) {
+            return false;
+        } else {
+            oldCustomer.setWxId(customer.getWxId());
+            oldCustomer.setBindTime(new Date());
+            if (!oldCustomer.updateById()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    @Override
+    public boolean unbindWechat(Customer customer) {
+        return false;
+    }
+
 }

@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class Customer extends Model<Customer> {
 
     private static final long serialVersionUID = 1L;
-
+	@TableField("id")
 	private Integer id;
 	@TableField("id_number")
 	private String idNumber;
@@ -25,9 +25,11 @@ public class Customer extends Model<Customer> {
 	private String wxId;
 	@TableField("phone_number")
 	private String phoneNumber;
+	@TableField("name")
 	private String name;
 	@TableField("nick_name")
 	private String nickName;
+	@TableField("address")
 	private String address;
 	@TableField("bind_state")
 	private Boolean bindState;

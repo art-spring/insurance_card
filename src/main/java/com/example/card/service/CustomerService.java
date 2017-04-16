@@ -15,4 +15,8 @@ import java.util.Map;
  */
 public interface CustomerService extends IService<Customer> {
     Map<String, Integer> getNameIdMap();
+
+    boolean bindWechat(Customer customer);
+
+    boolean unbindWechat(Customer customer);
 }
