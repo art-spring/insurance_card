@@ -1,6 +1,7 @@
 package com.example.card.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
 import com.example.card.model.CardInfoModel;
@@ -20,5 +21,6 @@ public interface CardMapper extends BaseMapper<Card> {
 
     CardStaticInfo selectStaticInfo();
 
-    List<CardInfoModel> search(CardSearchParam param);
+
+    List<CardInfoModel> search(Page<CardInfoModel> page, CardSearchParam param);
 }

@@ -18,12 +18,14 @@
 	<select id="selectStaticInfo" resultType="com.example.card.entity.CardStaticInfo">
 		SELECT
 		COUNT(1) AS totalCount,
-		IFNULL(SUM(IF(state = 1, 1, 0)) ,0)AS activeCount,
-		IFNULL(SUM(IF(state = 2, 1, 0)),0) AS usedCount
+		IFNULL(SUM(IF(status = 1, 1, 0)) ,0)AS activeCount,
+		IFNULL(SUM(IF(status = 2, 1, 0)),0) AS usedCount
 		FROM
 		card ;
 
 	</select>
+
+
 
 	<select id="search" parameterType="com.example.card.params.CardSearchParam" resultType="com.example.card.model.CardInfoModel">
 		SELECT
@@ -50,8 +52,8 @@
 		<if test="type != null">
 			AND c.type =#{type}
 		</if>
-		<if test="keyword !=null">
-
+		<if test="keyword != null">
+		AND (c.card_no like CONCAT('%',#{keyword},'%') or cs.name like CONCAT('%',#{keyword},'%') or a.name like CONCAT('%',#{keyword},'%') or cy.name like CONCAT('%',#{keyword},'%'))
 		</if>
 		<if test="agentName != null">
 			AND a.name = #{agentName}
@@ -62,7 +64,6 @@
 		<if test="applyDateEnd !=null">
 			AND <![CDATA[c.active_time <=#{applyDateEnd} ]]>
 		</if>
-        LIMIT ${(page-1)*pageSize},${pageSize}
 	</select>
 
 </mapper>

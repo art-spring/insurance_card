@@ -1,5 +1,6 @@
 package com.example.card.service.impl;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
 import com.example.card.mapper.CardMapper;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author caichunyi
@@ -32,10 +33,6 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         return this.cardMapper.selectStaticInfo();
     }
 
-    @Override
-    public List<CardInfoModel> search(CardSearchParam param) {
-        return this.cardMapper.search(param);
-    }
 
     @Override
     public boolean create(Card newCard) {
@@ -49,5 +46,14 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Page<CardInfoModel> search(CardSearchParam param) {
+
+        Page<CardInfoModel> page = new Page<>(param.getPage(), param.getPageSize());
+
+        page.setRecords(this.cardMapper.search(page, param));
+        return page;
     }
 }

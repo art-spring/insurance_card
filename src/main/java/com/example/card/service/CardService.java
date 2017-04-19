@@ -1,5 +1,6 @@
 package com.example.card.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
 import com.baomidou.mybatisplus.service.IService;
 import com.example.card.entity.CardStaticInfo;
@@ -20,7 +21,9 @@ import java.util.List;
 public interface CardService extends IService<Card> {
     CardStaticInfo getStaticInfo();
 
-    List<CardInfoModel> search(@NotNull CardSearchParam param);
+    Page<CardInfoModel> search(@NotNull CardSearchParam param);
 
     boolean create(Card newCard);
+
+
 }

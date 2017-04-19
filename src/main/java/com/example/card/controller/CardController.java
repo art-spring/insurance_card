@@ -43,21 +43,13 @@ public class CardController {
     }
 
     @PostMapping(value = "/select")
-    public JSONResult<List<CardInfoModel>> select(@RequestBody CardSearchParam param) {
-        JSONResult<List<CardInfoModel>> result = new JSONResult<>();
-        List<CardInfoModel> models = this.cardService.search(param);
-        result.setData(models);
+    public JSONResult<Page<CardInfoModel>> select(@RequestBody CardSearchParam param) {
+        JSONResult<Page<CardInfoModel>> result = new JSONResult<>();
+        Page<Card> page = new Page<>();
+        result.setData(this.cardService.search(param));
         return result;
     }
 
-    @PostMapping(value = "/test")
-    public JSONResult<Page<Card>> test() {
-        JSONResult<Page<Card>> result = new JSONResult<>();
-        Page<Card> page = new Page<>();
-        result.setData(this.cardService.selectPage(page, null));
-        result.getData().getTotal();
-        return result;
-    }
 
     @PostMapping("/getDetail")
     public JSONResult<Card> getDetail(int id) {

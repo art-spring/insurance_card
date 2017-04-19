@@ -1,6 +1,7 @@
 package com.example.card.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.card.enums.CardState;
 import com.example.card.params.CardSearchParam;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 public class CardControllerTest extends BaseControllerTest {
     @Test
+    public void getStaticInfo() throws Exception {
+        this.injectSession();
+        RequestBuilder requestBuilder  = MockMvcRequestBuilders.get("/card/getStaticInfo").session(this.mockHttpSession);
+        result = mvc.perform(requestBuilder).andReturn();
+        System.out.println("result:" + result.getResponse().getContentAsString());
+
+    }
+
+    @Test
     public void select() throws Exception {
         this.injectSession();
         CardSearchParam param = new CardSearchParam();
@@ -36,26 +46,48 @@ public class CardControllerTest extends BaseControllerTest {
     @Test
     public void test1() throws Exception {
 
-        RequestBuilder request = MockMvcRequestBuilders.post("/card/test");
-        result = mvc.perform(request).andReturn();
-
-
-
-        System.out.println("result" + result.getResponse().getContentAsString());
 
     }
 
+    private void search(CardSearchParam param) throws Exception {
+        String json = JSONObject.toJSONString(param);
 
+        RequestBuilder request = MockMvcRequestBuilders.post("/card/select").session(this.mockHttpSession).contentType(MediaType.APPLICATION_JSON).content(json);
+        result = mvc.perform(request).andReturn();
+
+        System.out.println("result" + result.getResponse().getContentAsString());
+    }
 
 
     @Test
     public void search() throws Exception {
-        RequestBuilder request = MockMvcRequestBuilders.post("/card/search").param("state", "0");
-        result = mvc.perform(request).andReturn();
+        this.injectSession();
+        CardSearchParam param = new CardSearchParam();
+        param.setPage(2);
+        param.setPageSize(3);
+        this.search(param);
+        param.setStatus(CardState.UN_USE.getKey());
+        this.search(param);
+        param.setStatus(CardState.ACTIVED.getKey());
+        this.search(param);
+        param.setStatus(CardState.USED.getKey());
+        this.search(param);
+        param.setPage(1);
+        param.setStatus(null);
+        param.setAgentName("吴");
+        this.search(param);
+        param =new CardSearchParam();
+        param.setType(1);
+        this.search(param);
+        param.setType(2);
+        this.search(param);
+        param =new CardSearchParam();
+        param.setKeyword("张");
+        this.search(param);
+        param.setAgentName("张三");
+        this.search(param);
 
 
-
-        System.out.println("result" + result.getResponse().getContentAsString());
 
     }
 
