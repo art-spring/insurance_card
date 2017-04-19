@@ -1,15 +1,15 @@
 package com.example.card.config;
 
+import com.example.card.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 /**
  * Created by caichunyi on 2017/3/13.
  */
 @Configuration
+@EnableWebMvc
 public class IndexConfig extends WebMvcConfigurerAdapter{
 
     @Override
@@ -22,10 +22,15 @@ public class IndexConfig extends WebMvcConfigurerAdapter{
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("http://localhost:8080","http://localhost:8081")
                 .allowCredentials(true)
                 .allowedMethods("GET", "POST", "DELETE", "PUT")
-                .maxAge(3600);
+                .maxAge(1800);
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        super.addInterceptors(registry);
+        registry.addInterceptor(new LoginInterceptor());
+    }
 }

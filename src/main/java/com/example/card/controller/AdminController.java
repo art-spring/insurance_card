@@ -28,7 +28,6 @@ import java.security.NoSuchAlgorithmException;
  * @author caichunyi
  * @since 2017-03-13
  */
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/admin")
 public class AdminController {

@@ -41,6 +41,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             HttpSession session = request.getSession();
             Object obj = session.getAttribute(HttpConstant.SESSION_DATA_KEY);
             if(obj == null){
+                response.addHeader("Access-Control-Allow-Credentials", "true");
+                response.addHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+                response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+                response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+                response.addHeader("Access-Control-Max-Age", "1800");//30 min
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json; charset=utf8");
                 PrintWriter writer = response.getWriter();
