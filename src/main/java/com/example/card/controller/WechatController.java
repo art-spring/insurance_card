@@ -10,7 +10,6 @@ import com.github.sd4324530.fastweixin.api.response.OauthGetTokenResponse;
 import com.github.sd4324530.fastweixin.message.BaseMsg;
 import com.github.sd4324530.fastweixin.message.TextMsg;
 import com.github.sd4324530.fastweixin.message.req.BaseEvent;
-import com.github.sd4324530.fastweixin.message.req.MenuEvent;
 import com.github.sd4324530.fastweixin.message.req.TextReqMsg;
 import com.github.sd4324530.fastweixin.servlet.WeixinControllerSupport;
 import org.slf4j.Logger;
@@ -22,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/weixin")
@@ -34,50 +31,50 @@ public class WechatController extends WeixinControllerSupport {
     private Config config;
 
 
-    @Value("${redirect.joinin.url}")
+    @Value("${wechat.redirect.joinin.url}")
     private String redirectJoininUrl;
-    @Value("${redirect.joinin.param.userId}")
+    @Value("${wechat.redirect.joinin.param.userId}")
     private String redirectJoininUserId;
-    @Value("${redirect.joinin.center.param.appId}")
+    @Value("${wechat.redirect.joinin.param.appId}")
     private String redirectJoininAppId;
-    @Value("${redirect.joinin.center.param.jsapiTicket}")
+    @Value("${wechat.redirect.joinin.param.jsapiTicket}")
     private String redirectJoininJsapiTicket;
-    @Value("${redirect.joinin.center.param.openId}")
+    @Value("${wechat.redirect.joinin.param.openId}")
     private String redirectJoininOpenId;
 
-    @Value("${redirect.info.url}")
+    @Value("${wechat.redirect.info.url}")
     private String redirectInfoUrl;
-    @Value("${redirect.info.param.userId}")
+    @Value("${wechat.redirect.info.param.userId}")
     private String redirectInfoUserId;
-    @Value("${redirect.info.param.appId}")
+    @Value("${wechat.redirect.info.param.appId}")
     private String redirectInfoAppId;
-    @Value("${redirect.info.param.jsapiTicket}")
+    @Value("${wechat.redirect.info.param.jsapiTicket}")
     private String redirectInfoJsapiTicket;
-    @Value("${redirect.info.param.openId}")
+    @Value("${wechat.redirect.info.param.openId}")
     private String redirectInfoOpenId;
 
 
-    @Value("${redirect.activecard.url}")
+    @Value("${wechat.redirect.activecard.url}")
     private String redirectActivecardUrl;
-    @Value("${redirect.activecard.param.userId}")
+    @Value("${wechat.redirect.activecard.param.userId}")
     private String redirectActivecardUserId;
-    @Value("${redirect.activecard.param.appId}")
+    @Value("${wechat.redirect.activecard.param.appId}")
     private String redirectActivecardAppId;
-    @Value("${redirect.activecard.param.jsapiTicket}")
+    @Value("${wechat.redirect.activecard.param.jsapiTicket}")
     private String redirectActivecardJsapiTicket;
-    @Value("${redirect.activecard.param.openId}")
+    @Value("${wechat.redirect.activecard.param.openId}")
     private String redirectActivecardOpenId;
 
 
-    @Value("${redirect.agent.url}")
+    @Value("${wechat.redirect.agent.url}")
     private String redirectAgentUrl;
-    @Value("${redirect.agent.param.userId}")
+    @Value("${wechat.redirect.agent.param.userId}")
     private String redirectAgentUserId;
-    @Value("${redirect.agent.param.appId}")
+    @Value("${wechat.redirect.agent.param.appId}")
     private String redirectAgentAppId;
-    @Value("${redirect.agent.param.jsapiTicket}")
+    @Value("${wechat.redirect.agent.param.jsapiTicket}")
     private String redirectAgentJsapiTicket;
-    @Value("${redirect.agent.param.openId}")
+    @Value("${wechat.redirect.agent.param.openId}")
     private String redirectAgentOpenId;
 
 

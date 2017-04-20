@@ -1,7 +1,9 @@
 package com.example.card.service;
 
-import com.example.card.entity.Agent;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
+import com.example.card.entity.Agent;
+import com.example.card.params.AgentSearchParam;
 
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public interface AgentService extends IService<Agent> {
      */
     boolean createByManager(Agent agent);
 
+    Page<Agent> search(AgentSearchParam param);
 
 
 }

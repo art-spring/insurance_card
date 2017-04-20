@@ -9,6 +9,7 @@ import com.example.card.params.CardSearchParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
 import com.example.card.service.CardService;
+import com.example.card.utils.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/card")
-@Auth
+//@Auth
 public class CardController {
 
     @Autowired
@@ -44,7 +45,6 @@ public class CardController {
     @PostMapping(value = "/select")
     public JSONResult<Page<CardInfoModel>> select(@RequestBody CardSearchParam param) {
         JSONResult<Page<CardInfoModel>> result = new JSONResult<>();
-        Page<Card> page = new Page<>();
         result.setData(this.cardService.search(param));
         return result;
     }
@@ -57,23 +57,23 @@ public class CardController {
         result.setData(this.cardService.selectById(id));
         return result;
     }
-
-    @PostMapping("/setAgent")
-    public JSONResult<String> setAgent(int[] ids, int agentId) {
-        JSONResult<String> result = new JSONResult<>();
-
-        List<Card> cards = new ArrayList<>();
-        Card card;
-        for (int id : ids) {
-            card = new Card();
-            card.setId(id);
-            card.setAgentId(agentId);
-            cards.add(card);
-        }
-        this.cardService.updateBatchById(cards);
-
-        return result;
-    }
+//
+//    @PostMapping("/setAgent")
+//    public JSONResult<String> setAgent(int[] ids, int agentId) {
+//        JSONResult<String> result = new JSONResult<>();
+//
+//        List<Card> cards = new ArrayList<>();
+//        Card card;
+//        for (int id : ids) {
+//            card = new Card();
+//            card.setId(id);
+//            card.setAgentId(agentId);
+//            cards.add(card);
+//        }
+//        this.cardService.updateBatchById(cards);
+//
+//        return result;
+//    }
 
     @PostMapping(value = "/insert")
     public JSONResult<Card> insert(@RequestBody Card card) {
@@ -100,26 +100,37 @@ public class CardController {
     public JSONResult<Integer> delete(@RequestParam("keys") String ids) {
         JSONResult<Integer> result = new JSONResult<>();
         List<String> cardIds = Arrays.asList(ids.split(","));
-        if (!this.cardService.deleteBatchIds(cardIds)){
+        if (!this.cardService.deleteBatchIds(cardIds)) {
             result.setResultCode(ResultCode.FAILD);
-        }else{
+        } else {
             result.setData(cardIds.size());
         }
         return result;
     }
 
     @PostMapping(value = "/update")
-    public JSONResult<Card> update(@RequestParam("keys") String id,@RequestBody Card updateInfo) {
+    public JSONResult<Card> update(@RequestParam("keys") String keys, @RequestBody Card updateInfo) {
         JSONResult<Card> result = new JSONResult<>();
-        Card oldCardInfo = this.cardService.selectById(id);
-        if (oldCardInfo!=null){
-            oldCardInfo.setCardNo(updateInfo.getCardNo());
-            oldCardInfo.setPassword(updateInfo.getPassword());
-            oldCardInfo.setType(updateInfo.getType());
-            if (!oldCardInfo.updateById()){
-                result.setResultCode(ResultCode.FAILD);
+        String[] ids = keys.split(",");
+        List<Card> oldCards = this.cardService.selectBatchIds(Arrays.asList(ids));
+
+        boolean updateCardNo = !StringUtil.isEmpty(updateInfo.getCardNo());
+        boolean updateCardPas = !StringUtil.isEmpty(updateInfo.getPassword());
+        boolean updateCardType = updateInfo.getType() != null;
+        boolean updateAgent = updateInfo.getAgentId() != null;
+        if (oldCards != null && oldCards.size() > 0) {
+            for (Card card :  oldCards){
+                if (updateCardNo)
+                    card.setCardNo(updateInfo.getCardNo());
+                if (updateCardPas)
+                    card.setPassword(updateInfo.getPassword());
+                if (updateCardType)
+                    card.setType(updateInfo.getType().intValue());
+                if (updateAgent)
+                    card.setAgentId(updateInfo.getAgentId().intValue());
             }
-        }else{
+            this.cardService.insertOrUpdateBatch(oldCards);
+        } else {
             result.setResultCode(ResultCode.FAILD);
         }
         return result;

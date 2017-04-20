@@ -6,17 +6,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Date;
 
 /**
- * Created by racoon on 2017/4/10.
+ * Created by racoon on 2017/4/20.
  */
-public class JoininSearchParam {
+public class PolicySearchParam {
     private Integer page = 1;
     private Integer pageSize = 10;
     @JsonDeserialize(using = DateJsonDeserializer.class)
-    private Date applyDateBegin;
+    private Date createTimeBegin;
     @JsonDeserialize(using = DateJsonDeserializer.class)
-    private Date applyDateEnd;
+    private Date createTimeEnd;
     private Integer status;
-    private String keyword;
 
     public Integer getPage() {
         return page;
@@ -34,20 +33,20 @@ public class JoininSearchParam {
         this.pageSize = pageSize;
     }
 
-    public Date getApplyDateBegin() {
-        return applyDateBegin;
+    public Date getCreateTimeBegin() {
+        return createTimeBegin;
     }
 
-    public void setApplyDateBegin(Date applyDateBegin) {
-        this.applyDateBegin = applyDateBegin;
+    public void setCreateTimeBegin(Date createTimeBegin) {
+        this.createTimeBegin = createTimeBegin;
     }
 
-    public Date getApplyDateEnd() {
-        return applyDateEnd;
+    public Date getCreateTimeEnd() {
+        return createTimeEnd;
     }
 
-    public void setApplyDateEnd(Date applyDateEnd) {
-        this.applyDateEnd = applyDateEnd;
+    public void setCreateTimeEnd(Date createTimeEnd) {
+        this.createTimeEnd = createTimeEnd;
     }
 
     public Integer getStatus() {
@@ -56,13 +55,5 @@ public class JoininSearchParam {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
     }
 }

@@ -3,13 +3,12 @@ package com.example.card.wechat;
 /**
  * Created by racoon on 2017/4/17.
  */
-import com.github.sd4324530.fastweixin.api.config.ApiConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
+import com.github.sd4324530.fastweixin.api.config.ApiConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "wechat")
 public class Config {
 
     @Value("${wechat.token}")
@@ -24,8 +23,6 @@ public class Config {
     @Value("${wechat.aesKey}")
     private String aesKey;
 
-    @Autowired
-    @Qualifier("apiConfig")
     private ApiConfig apiConfig;
 
     public String getToken() {
@@ -45,6 +42,9 @@ public class Config {
     }
 
     public ApiConfig getApiConfig() {
+        if (apiConfig == null){
+            apiConfig = new ApiConfig(getAppId(),getAppSecret(),true);
+        }
         return apiConfig;
     }
 }

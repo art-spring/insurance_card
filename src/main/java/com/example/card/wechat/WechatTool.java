@@ -3,6 +3,7 @@ package com.example.card.wechat;
 /**
  * Created by racoon on 2017/4/17.
  */
+
 import com.github.sd4324530.fastweixin.api.JsAPI;
 import com.github.sd4324530.fastweixin.api.MaterialAPI;
 import com.github.sd4324530.fastweixin.api.MenuAPI;
@@ -24,9 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
 public class WechatTool {

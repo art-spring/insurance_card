@@ -2,7 +2,8 @@
 SQLyog Enterprise v12.09 (64 bit)
 MySQL - 5.7.17 : Database - insurance_card
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 
@@ -37,7 +38,7 @@ CREATE TABLE `agent` (
   `phone_number` varchar(11) NOT NULL COMMENT '手机号',
   `name` varchar(10) NOT NULL COMMENT '姓名',
   `apply_type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '申请的绑定类型:默认0',
-  `state` tinyint(4) NOT NULL COMMENT '账号状态0：申请；1：绑定；2：解绑',
+  `status` tinyint(4) NOT NULL COMMENT '账号状态0：申请；1：绑定；2：解绑',
   `create_type` tinyint(4) NOT NULL COMMENT '创建账户类型0：代理商申请，1：管理员添加',
   `create_time` datetime NOT NULL COMMENT '记录创建时间',
   `bind_time` datetime DEFAULT NULL COMMENT '绑定时间',

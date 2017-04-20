@@ -9,11 +9,35 @@
 		<result column="phone_number" property="phoneNumber" />
 		<result column="name" property="name" />
 		<result column="apply_type" property="applyType" />
-		<result column="state" property="state" />
+		<result column="status" property="status" />
 		<result column="create_type" property="createType" />
 		<result column="create_time" property="createTime" />
 		<result column="bind_time" property="bindTime" />
 		<result column="unbind_time" property="unbindTime" />
 	</resultMap>
 
+	<select id="search" parameterType="com.example.card.params.JoininSearchParam" resultMap="BaseResultMap">
+		SELECT
+		j.id as Id,
+		j.wx_id as wxId,
+		j.phone_number as phoneNumber,
+		j.name as name,
+		j.apply_type as applyType,
+		j.status as status,
+		j.create_type as createType,
+		j.create_time as createTime,
+		j.bind_time as bindTime,
+		j.unbind_time as unbindTime
+		FROM joinin j
+		WHERE 1=1
+		<if test="status != null">
+			AND j.status =#{status}
+		</if>
+		<if test="applyDateBegin !=null">
+			AND <![CDATA[j.active_time >=#{applyDateBegin} ]]>
+		</if>
+		<if test="applyDateEnd !=null">
+			AND <![CDATA[j.active_time <=#{applyDateEnd} ]]>
+		</if>
+	</select>
 </mapper>

@@ -3,6 +3,9 @@ package com.example.card.entity;
 import com.baomidou.mybatisplus.activerecord.Model;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.example.card.utils.DateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.io.Serializable;
 
 
@@ -26,14 +29,17 @@ public class Joinin extends Model<Joinin> {
 	private String name;
 	@TableField("apply_type")
 	private Integer applyType;
-	private Integer state;
+	private Integer status;
 	@TableField("create_type")
 	private Integer createType;
 	@TableField("create_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date createTime;
 	@TableField("bind_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date bindTime;
 	@TableField("unbind_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date unbindTime;
 
 
@@ -82,13 +88,12 @@ public class Joinin extends Model<Joinin> {
 		return this;
 	}
 
-	public Integer getState() {
-		return state;
+	public Integer getStatus() {
+		return status;
 	}
 
-	public Joinin setState(Integer state) {
-		this.state = state;
-		return this;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	public Integer getCreateType() {

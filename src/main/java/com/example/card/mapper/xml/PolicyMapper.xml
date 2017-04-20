@@ -10,7 +10,30 @@
 		<result column="recognizee" property="recognizee" />
 		<result column="start_time" property="startTime" />
 		<result column="end_time" property="endTime" />
-		<result column="export_state" property="exportState" />
+		<result column="export_status" property="exportStatus" />
+		<result column="create_time" property="createTime" />
 	</resultMap>
 
+	<select id="search" parameterType="com.example.card.params.PolicySearchParam" resultMap="BaseResultMap">
+		SELECT
+		p.id as Id,
+		p.card_id as cardId,
+		p.holder as holder,
+		p.recognizee as recognizee,
+		p.start_time as startTime,
+		p.end_time as endTime,
+		p.export_status as exportStatus,
+		p.create_time as createTime
+		FROM policy p
+		WHERE 1=1
+		<if test="status != null">
+			AND p.status =#{status}
+		</if>
+		<if test="createTimeBegin !=null">
+			AND <![CDATA[p.create_time >=#{createTimeBegin} ]]>
+		</if>
+		<if test="createTimeEnd !=null">
+			AND <![CDATA[p.create_time <=#{createTimeEnd} ]]>
+		</if>
+	</select>
 </mapper>

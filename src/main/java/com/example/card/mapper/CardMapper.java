@@ -22,5 +22,5 @@ public interface CardMapper extends BaseMapper<Card> {
     CardStaticInfo selectStaticInfo();
 
 
-    List<CardInfoModel> search(Page<CardInfoModel> page, CardSearchParam param);
+    List<CardInfoModel> search(CardSearchParam param);
 }

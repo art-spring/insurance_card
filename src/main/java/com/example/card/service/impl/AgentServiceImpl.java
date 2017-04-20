@@ -1,16 +1,20 @@
 package com.example.card.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Agent;
 import com.example.card.enums.AccountCreateType;
 import com.example.card.enums.ApplyType;
 import com.example.card.enums.BindState;
 import com.example.card.mapper.AgentMapper;
+import com.example.card.model.CardInfoModel;
+import com.example.card.params.AgentSearchParam;
 import com.example.card.service.AgentService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,15 +51,21 @@ public class AgentServiceImpl extends ServiceImpl<AgentMapper, Agent> implements
         Agent searchEntity = this.agentMapper.selectOne(param);
         if (searchEntity == null) {
             agent.setApplyType(ApplyType.DEFAULT.getKey());
-            agent.setState(BindState.APPLY.getKey());
+            agent.setStatus(BindState.APPLY.getKey());
             agent.setCreateType(AccountCreateType.MAMANGER_ADD.getKey());
+            agent.setCreateTime(new Date());
             agent.insert();
             return true;
         } else {
             return false;
         }
+    }
 
-
+    @Override
+    public Page<Agent> search(AgentSearchParam param) {
+        Page<Agent> page = new Page<>(param.getPage(), param.getPageSize());
+        page.setRecords(this.agentMapper.search(param));
+        return page;
     }
 
 

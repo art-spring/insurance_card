@@ -1,9 +1,12 @@
 package com.example.card.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.example.card.utils.DateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -24,11 +27,16 @@ public class Policy extends Model<Policy> {
 	private String holder;
 	private String recognizee;
 	@TableField("start_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date startTime;
 	@TableField("end_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date endTime;
-	@TableField("export_state")
-	private Boolean exportState;
+	@TableField("create_time")
+	@JsonSerialize(using = DateJsonSerializer.class)
+	private Date createTime;
+	@TableField("export_status")
+	private Integer exportStatus;
 
 
 	public Integer getId() {
@@ -85,13 +93,20 @@ public class Policy extends Model<Policy> {
 		return this;
 	}
 
-	public Boolean isExportState() {
-		return exportState;
+	public Integer getExportStatus() {
+		return exportStatus;
 	}
 
-	public Policy setExportState(Boolean exportState) {
-		this.exportState = exportState;
-		return this;
+	public void setExportStatus(Integer exportStatus) {
+		this.exportStatus = exportStatus;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
 	}
 
 	@Override
