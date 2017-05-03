@@ -1,17 +1,22 @@
 package com.example.card.controller;
 
+import com.example.card.entity.Card;
 import com.example.card.entity.Customer;
+import com.example.card.model.CustomerBaseInfo;
 import com.example.card.params.CustomerBindWechatParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
+import com.example.card.service.CardService;
 import com.example.card.service.CustomerService;
 import com.example.card.utils.StringUtil;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,7 +32,85 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/detail")
+    @Autowired
+    private CardService cardService;
+
+    @PostMapping("wechat/baseInfo/{openId}")
+    public JSONResult<CustomerBaseInfo> getBaseInfo(@PathVariable("openId") String openId){
+        JSONResult<CustomerBaseInfo> result = new JSONResult<>();
+        Map<String,Object> map = new HashedMap();
+        map.put("wx_id",openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp!=null&&tmp.size() == 1){
+            Customer customer = tmp.get(0);
+            CustomerBaseInfo baseInfo = new CustomerBaseInfo();
+            baseInfo.setName(customer.getName());
+            baseInfo.setPhoneNumber(customer.getPhoneNumber());
+            baseInfo.setHeadUrl(customer.getHeadUrl());
+            map.clear();
+            map.put("customer_id",customer.getId().intValue());
+            List<Card> cards = cardService.selectByMap(map);
+            baseInfo.setMyLatestCards(cards);
+            result.setData(baseInfo);
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
+
+    @PostMapping("wechat/info/detail/{openId}")
+    public JSONResult<Customer> wechatGetDetail(@PathVariable("openId") String openId) {
+        JSONResult<Customer> result = new JSONResult<>();
+        Map<String,Object> map = new HashedMap();
+        map.put("wx_id",openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp!=null&&tmp.size() == 1){
+            result.setData(tmp.get(0));
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
+
+    @PostMapping("wechat/info/modify")
+    public JSONResult<Customer> wechatModifyInfo(@RequestBody Map<String,String> params) {
+        JSONResult<Customer> result = new JSONResult<>();
+//        id:_this.state.id,
+//                name:_this.state.name,
+//                iDNo:_this.state.iDNo,
+//                address:_this.state.address,
+
+        String id = params.get("id");
+        String name = params.get("name");
+        String iDNo = params.get("iDNo");
+        String address = params.get("address");
+
+        if (StringUtils.isEmpty(id) || StringUtils.isEmpty(name)
+                || StringUtils.isEmpty(iDNo) || StringUtils.isEmpty(address)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+
+        Customer customer  = customerService.selectById(id);
+
+        if (customer!=null){
+            customer.setName(name);
+            customer.setIdNumber(iDNo);
+            customer.setAddress(address);
+            if (!customer.updateById()){
+                result.setResultCode(ResultCode.FAILD);
+                result.setMessage("修改失败");
+            }
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
+
+
+
+
+    @GetMapping("detail")
     public JSONResult<Customer> detail(@RequestParam("id") int id) {
         JSONResult<Customer> result = new JSONResult<>();
         Customer customer = customerService.selectById(id);
@@ -38,7 +121,7 @@ public class CustomerController {
         return result;
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = "create")
     public JSONResult<Customer> create(@RequestBody Customer customer) {
         JSONResult<Customer> result = new JSONResult<>();
         if (StringUtils.isEmpty(customer.getPhoneNumber())) {

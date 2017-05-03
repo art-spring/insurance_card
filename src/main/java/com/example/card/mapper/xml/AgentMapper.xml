@@ -16,7 +16,6 @@
 		<result column="unbind_time" property="unbindTime" />
 	</resultMap>
 
-
 	<select id="search" parameterType="com.example.card.params.AgentSearchParam" resultMap="BaseResultMap">
 		SELECT
 		a.id as Id,

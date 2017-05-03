@@ -1,27 +1,26 @@
 package com.example.card.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.example.card.config.SmsConfig;
 import com.example.card.entity.Agent;
-import com.example.card.entity.Card;
 import com.example.card.enums.BindState;
-import com.example.card.interceptor.Auth;
+import com.example.card.enums.SmsCodeCheckResult;
 import com.example.card.params.AgentSearchParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
 import com.example.card.service.AgentService;
+import com.example.card.utils.SmsUtil;
 import com.example.card.utils.StringUtil;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -37,6 +36,9 @@ public class AgentController {
 
     @Autowired
     private AgentService agentService;
+
+    @Autowired
+    private SmsConfig smsConfig;
 
     @PostMapping(value = "/insert")
     public JSONResult<Agent> insert(@NotNull @RequestBody Agent agent) {
@@ -106,7 +108,7 @@ public class AgentController {
         boolean updateStatus = updateInfo.getStatus() != null;
 
         if (oldAgents != null && oldAgents.size() > 0) {
-            for (Agent agent :  oldAgents){
+            for (Agent agent : oldAgents) {
                 if (updateAgentName)
                     agent.setName(updateInfo.getName());
                 if (updateAgentPhone)
@@ -117,6 +119,100 @@ public class AgentController {
             this.agentService.insertOrUpdateBatch(oldAgents);
         } else {
             result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
+
+    @PostMapping(value = "wechat/apply")
+    public JSONResult<Agent> wechatApply(@RequestBody Map<String, String> params) {
+
+//        openId: openId,
+//        smsCode: this.state.smsCode,
+//        applicant: this.state.applicant,
+//        phoneNumber: this.state.phoneNumber
+
+
+        JSONResult<Agent> result = new JSONResult<>();
+        String openId = params.get("openId");
+        String smsCode = params.get("smsCode");
+        String applicant = params.get("applicant");
+        String phoneNumber = params.get("phoneNumber");
+        if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(smsCode)
+                || StringUtils.isEmpty(applicant) || StringUtils.isEmpty(phoneNumber)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+
+        if (SmsUtil.checkCode(phoneNumber, smsCode, Long.parseLong(smsConfig.getOverTime())) == SmsCodeCheckResult.MATCH) {
+            Agent agent = new Agent();
+            agent.setName(applicant);
+            agent.setPhoneNumber(applicant);
+            agent.setWxId(openId);
+            boolean addResult = this.agentService.createByManager(agent);
+            if (!addResult) {
+                result.setResultCode(ResultCode.FAILD);
+                result.setData(null);
+            }
+            result.setData(agent);
+        } else {
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("短信验证码验证失败");
+        }
+
+        return result;
+    }
+
+    @PostMapping(value = "wechat/unbind")
+    public JSONResult<Boolean> wechatUnbind(@RequestBody Map<String, String> params) {
+
+//        openId: openId,
+//        smsCode: this.state.smsCode,
+//        phoneNumber: this.state.phoneNumber
+
+        JSONResult<Boolean> result = new JSONResult<>();
+        String openId = params.get("openId");
+        String smsCode = params.get("smsCode");
+        String phoneNumber = params.get("phoneNumber");
+
+        if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(smsCode)
+                || StringUtils.isEmpty(phoneNumber)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+
+        if (SmsUtil.checkCode(phoneNumber, smsCode, Long.parseLong(smsConfig.getOverTime())) == SmsCodeCheckResult.MATCH) {
+            Map<String, Object> map = new HashedMap();
+            map.put("wx_id", openId);
+            List<Agent> tmp = agentService.selectByMap(map);
+            if (tmp!=null&&tmp.size()==1){
+                if (!tmp.get(0).setWxId(null).updateById()){
+                    result.setResultCode(ResultCode.FAILD);
+                }
+            }else{
+                result.setResultCode(ResultCode.FAILD);
+                result.setMessage("该微信尚未绑定");
+            }
+        } else {
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("短信验证码验证失败");
+        }
+        return result;
+    }
+
+    @PostMapping(value = "wechat/checkOpenId/{openId}")
+    public JSONResult<Boolean> wechatCheckApply(@PathVariable("openId") String openId) {
+        JSONResult<Boolean> result = new JSONResult<>();
+        if (StringUtils.isEmpty(openId)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
+        List<Agent> tmp = agentService.selectByMap(map);
+        if (tmp != null && tmp.size() > 0) {
+            result.setData(true);
+        } else {
+            result.setData(false);
         }
         return result;
     }

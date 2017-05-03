@@ -105,6 +105,11 @@
             <version>3.15</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.5</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -116,23 +121,23 @@
         </plugins>
 
         <resources>
-            <!--<resource>-->
-                <!--<directory>src/main/java</directory>-->
-                <!--<includes>-->
-                    <!--<include>**/*.properties</include>-->
-                    <!--<include>**/*.xml</include>-->
-                <!--</includes>-->
-                <!--&lt;!&ndash; 是否替换资源中的属性&ndash;&gt;-->
-                <!--<filtering>false</filtering>-->
-            <!--</resource>-->
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src/main/java</directory>
                 <includes>
-                    <include>*.properties</include>
-                    <include>*.xml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
                 </includes>
+                <!-- 是否替换资源中的属性-->
                 <filtering>false</filtering>
             </resource>
+            <!--<resource>-->
+                <!--<directory>src/main/resources</directory>-->
+                <!--<includes>-->
+                    <!--<include>*.properties</include>-->
+                    <!--<include>*.xml</include>-->
+                <!--</includes>-->
+                <!--<filtering>false</filtering>-->
+            <!--</resource>-->
         </resources>
     </build>
 </project>

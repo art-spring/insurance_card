@@ -14,6 +14,7 @@
 		<result column="create_time" property="createTime" />
 	</resultMap>
 
+
 	<select id="search" parameterType="com.example.card.params.PolicySearchParam" resultMap="BaseResultMap">
 		SELECT
 		p.id as Id,

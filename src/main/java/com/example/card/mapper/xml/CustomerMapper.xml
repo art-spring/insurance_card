@@ -14,6 +14,7 @@
 		<result column="bind_state" property="bindState" />
 		<result column="bind_time" property="bindTime" />
 		<result column="unbind_time" property="unbindTime" />
+		<result column="head_url" property="headUrl" />
 	</resultMap>
 
 </mapper>

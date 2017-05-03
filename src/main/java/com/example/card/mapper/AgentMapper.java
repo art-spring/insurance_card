@@ -1,11 +1,8 @@
 package com.example.card.mapper;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.example.card.entity.Agent;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.example.card.model.CardInfoModel;
+import com.example.card.entity.Agent;
 import com.example.card.params.AgentSearchParam;
-import com.example.card.params.CardSearchParam;
 
 import java.util.List;
 

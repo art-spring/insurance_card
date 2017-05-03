@@ -1,9 +1,10 @@
 package com.example.card.entity;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
+
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -37,6 +38,9 @@ public class Customer extends Model<Customer> {
 	private Date bindTime;
 	@TableField("unbind_time")
 	private Date unbindTime;
+	@TableField("head_url")
+	private String headUrl;
+
 
 
 	public Integer getId() {
@@ -129,9 +133,18 @@ public class Customer extends Model<Customer> {
 		return this;
 	}
 
+	public String getHeadUrl() {
+		return headUrl;
+	}
+
+	public void setHeadUrl(String headUrl) {
+		this.headUrl = headUrl;
+	}
+
 	@Override
 	protected Serializable pkVal() {
 		return this.id;
 	}
+
 
 }
