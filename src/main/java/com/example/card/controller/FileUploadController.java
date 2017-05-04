@@ -2,15 +2,16 @@ package com.example.card.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.card.entity.Card;
+import com.example.card.entity.Policy;
 import com.example.card.enums.CardState;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
-import com.example.card.service.AgentService;
-import com.example.card.service.CardService;
-import com.example.card.service.CardTypeService;
-import com.example.card.service.CustomerService;
+import com.example.card.service.*;
 import com.example.card.utils.ExcelUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
+import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by caichunyi on 2017/3/13.
@@ -40,6 +47,9 @@ public class FileUploadController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private PolicyService policyService;
 
     @RequestMapping(value = "upload", method = RequestMethod.POST)
     public JSONResult<String> upload(MultipartFile file) {
@@ -109,8 +119,22 @@ public class FileUploadController {
             result.setData(e.getMessage());
         }
         return result;
+    }
 
-
+    // 下载execl文档
+    @RequestMapping(value = "policy/download")
+    public void download(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 告诉浏览器用什么软件可以打开此文件
+        response.setHeader("content-Type", "application/vnd.ms-excel");
+        // 下载文件的默认名称
+        // 初始化时设置 日期和时间模式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fileName = "%e6%8a%95%e4%bf%9d%e4%bf%a1%e6%81%af " + sdf.format(new Date()) + ".xls";
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        List<Policy> list = new ArrayList<>();
+        list.add(policyService.selectById(1));
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), Policy.class, list);
+        workbook.write(response.getOutputStream());
     }
 
     private void checkState(Object stateName, int colIndex, Card card, StringBuilder errorTextBuilder) {

@@ -34,10 +34,10 @@
 			AND a.status =#{status}
 		</if>
 		<if test="applyDateBegin !=null">
-			AND <![CDATA[a.active_time >=#{applyDateBegin} ]]>
+			AND <![CDATA[a.apply_type >=#{applyDateBegin} ]]>
 		</if>
 		<if test="applyDateEnd !=null">
-			AND <![CDATA[a.active_time <=#{applyDateEnd} ]]>
+			AND <![CDATA[a.apply_type <=#{applyDateEnd} ]]>
 		</if>
 	</select>
 

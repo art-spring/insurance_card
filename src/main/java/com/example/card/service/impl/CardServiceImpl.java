@@ -1,17 +1,17 @@
 package com.example.card.service.impl;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardStaticInfo;
 import com.example.card.mapper.CardMapper;
 import com.example.card.model.CardInfoModel;
 import com.example.card.params.CardSearchParam;
 import com.example.card.service.CardService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * <p>
@@ -46,6 +46,13 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
         } else {
             return false;
         }
+    }
+
+    @Override
+    public boolean useCard(Card card) {
+        card.setStatus(2);
+        card.setUsedTime(new Date());
+        return card.updateById();
     }
 
     @Override

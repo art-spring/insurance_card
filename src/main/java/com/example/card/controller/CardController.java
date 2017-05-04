@@ -17,10 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -98,6 +95,72 @@ public class CardController {
         return result;
     }
 
+    @PostMapping(value = "wechat/mycard/detail/{openId}/{cardId}")
+    public JSONResult<Card> getMyCardDetail(@PathVariable("openId") String openId,
+                                            @PathVariable("cardId") String cardId) {
+        JSONResult<Card> result = new JSONResult<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("wx_id", openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp != null && tmp.size() > 0) {
+            Card card = cardService.selectById(cardId);
+            if (card == null) {
+                result.setResultCode(ResultCode.FAILD);
+                result.setMessage("id错误");
+            }
+            result.setData(card);
+        } else {
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("会员未绑定");
+        }
+        return result;
+    }
+
+    @PostMapping(value = "wechat/mycard/active/{openId}")
+    public JSONResult<Card> activeMyCard(@PathVariable("openId") String openId,
+                                         @RequestBody Map<String, String> params) {
+        JSONResult<Card> result = new JSONResult<>();
+        String cardNo = params.get("cardNo");
+        String password = params.get("password");
+        String id = params.get("id");
+
+        if (StringUtil.isEmpty(openId)
+                || StringUtil.isEmpty(cardNo)
+                || StringUtil.isEmpty(password)
+                || StringUtil.isEmpty(id)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("wx_id", openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp != null && tmp.size() == 1) {
+            Card card = cardService.selectById(id);
+            if (card == null) {
+                result.setResultCode(ResultCode.FAILD);
+                result.setMessage("id错误");
+            }else{
+                if (card.getPassword().equals(password)){
+                    card.setActiveTime(new Date());
+                    card.setStatus(1);
+                    if (!card.updateById())
+                        result.setResultCode(ResultCode.FAILD);
+                }else{
+                    result.setResultCode(ResultCode.FAILD);
+                    result.setMessage("密码错误");
+                }
+
+            }
+            result.setData(card);
+        } else {
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("会员未绑定");
+        }
+        return result;
+    }
+
+
     @PostMapping(value = "wechat/customer/all/{openId}")
     public JSONResult<List<Card>> getCustomerAllCards(@PathVariable("openId") String openId) {
         JSONResult<List<Card>> result = new JSONResult<>();
@@ -112,6 +175,48 @@ public class CardController {
             result.setResultCode(ResultCode.FAILD);
             result.setMessage("会员未绑定");
         }
+        return result;
+    }
+
+    @PostMapping(value = "wechat/customer/add/{openId}")
+    public JSONResult<Card> getCustomerAllCards(@PathVariable("openId") String openId, @RequestBody Map<String, String> parmas) {
+
+//        type: 1,
+//                cardNo: '',
+//                password: '',
+
+        String type = parmas.get("type");
+        String cardNo = parmas.get("cardNo");
+        String password = parmas.get("password");
+
+        JSONResult<Card> result = new JSONResult<>();
+
+        if (StringUtil.isEmpty(openId)
+                || StringUtil.isEmpty(type)
+                || StringUtil.isEmpty(cardNo)
+                || StringUtil.isEmpty(password)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("wx_id", openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp != null && tmp.size() == 1) {
+            Card newCard = new Card();
+            newCard.setCardNo(cardNo);
+            newCard.setPassword(password);
+            newCard.setType(Integer.parseInt(type));
+            newCard.setCustomerId(tmp.get(0).getId());
+            boolean addResult = this.cardService.create(newCard);
+            if (!addResult) {
+                result.setResultCode(ResultCode.FAILD);
+            }
+            result.setData(newCard);
+        } else {
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("会员未绑定");
+        }
+
         return result;
     }
 

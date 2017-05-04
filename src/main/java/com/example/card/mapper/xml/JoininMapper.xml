@@ -33,10 +33,10 @@
 			AND j.status =#{status}
 		</if>
 		<if test="applyDateBegin !=null">
-			AND <![CDATA[j.active_time >=#{applyDateBegin} ]]>
+			AND <![CDATA[j.create_time >=#{applyDateBegin} ]]>
 		</if>
 		<if test="applyDateEnd !=null">
-			AND <![CDATA[j.active_time <=#{applyDateEnd} ]]>
+			AND <![CDATA[j.create_time <=#{applyDateEnd} ]]>
 		</if>
 	</select>
 </mapper>

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.example.card.utils.DateJsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.jeecgframework.poi.excel.annotation.ExcelTarget;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,6 +19,7 @@ import java.util.Date;
  * @author caichunyi
  * @since 2017-03-13
  */
+@ExcelTarget("policy")
 public class Policy extends Model<Policy> {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +27,9 @@ public class Policy extends Model<Policy> {
 	private Integer id;
 	@TableField("card_id")
 	private Integer cardId;
+	@Excel(name = "投保人", orderNum = "1")
 	private String holder;
+	@Excel(name = "被投保人", orderNum = "2")
 	private String recognizee;
 	@TableField("start_time")
 	@JsonSerialize(using = DateJsonSerializer.class)
