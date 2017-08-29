@@ -1,8 +1,9 @@
 package com.example.card.service;
 
-import com.example.card.entity.CardType;
 import com.baomidou.mybatisplus.service.IService;
+import com.example.card.entity.CardType;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,4 +17,9 @@ import java.util.Map;
 public interface CardTypeService extends IService<CardType> {
 
     Map<String, Integer> getNameIdMap();
+
+    List<CardType> getAllCardType();
+
+    CardType getCardTypeByTypeName(String typeName);
+
 }

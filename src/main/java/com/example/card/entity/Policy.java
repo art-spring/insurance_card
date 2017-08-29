@@ -31,15 +31,19 @@ public class Policy extends Model<Policy> {
 	private String holder;
 	@Excel(name = "被投保人", orderNum = "2")
 	private String recognizee;
+	@Excel(name = "生效时间", orderNum = "3", format = "yyyy-MM-dd")
 	@TableField("start_time")
 	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date startTime;
+	@Excel(name = "失效时间", orderNum = "4", format = "yyyy-MM-dd")
 	@TableField("end_time")
 	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date endTime;
+	@Excel(name = "创建时间", orderNum = "5", format = "yyyy-MM-dd")
 	@TableField("create_time")
 	@JsonSerialize(using = DateJsonSerializer.class)
 	private Date createTime;
+	@Excel(name = "导出状态", orderNum = "6", replace = {"未导出_0", "已导出_1"})
 	@TableField("export_status")
 	private Integer exportStatus;
 

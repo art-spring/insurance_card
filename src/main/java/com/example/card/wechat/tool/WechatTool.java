@@ -1,9 +1,10 @@
-package com.example.card.wechat;
+package com.example.card.wechat.tool;
 
 /**
  * Created by racoon on 2017/4/17.
  */
 
+import com.example.card.wechat.config.Config;
 import com.github.sd4324530.fastweixin.api.JsAPI;
 import com.github.sd4324530.fastweixin.api.MaterialAPI;
 import com.github.sd4324530.fastweixin.api.MenuAPI;
@@ -61,6 +62,15 @@ public class WechatTool {
         return menuButton;
     }
 
+    private MenuButton createMenuItem4Media(MenuType type, String name, String key, String mediaId) {
+        MenuButton menuButton = new MenuButton();
+        menuButton.setType(type);
+        menuButton.setName(name);
+        menuButton.setKey(key);
+        menuButton.setMediaId(mediaId);
+        return menuButton;
+    }
+
     /**
      * 创建菜单
      */
@@ -71,18 +81,18 @@ public class WechatTool {
         menuAPI.deleteMenu();
         Menu menu = new Menu();
         //准备一级主菜单
-        MenuButton menu1 = createMenuItem(MenuType.CLICK, "便捷生活", "1", null);
-        MenuButton menu1_sub1 = createMenuItem(MenuType.VIEW, "加盟申请", "1-1", wechatMenuUrlJoinin);
-        MenuButton menu1_sub2 = createMenuItem(MenuType.VIEW, "吃饭", "1-2", wechatMenuUrlJoinin);
-        MenuButton menu1_sub3 = createMenuItem(MenuType.VIEW, "洗车", "1-3", wechatMenuUrlJoinin);
+        MenuButton menu1 = createMenuItem(MenuType.CLICK, "生活服务", "1", null);
+        MenuButton menu1_sub1 = createMenuItem4Media(MenuType.VIEW, "餐饮服务", "1-1", wechatMenuUrlJoinin);
+        MenuButton menu1_sub2 = createMenuItem4Media(MenuType.VIEW, "汽车服务", "1-2", "https://www.baidu.com");
+        MenuButton menu1_sub3 = createMenuItem4Media(MenuType.VIEW, "体检中心", "1-3", "https://www.baidu.com");
         menu1.setSubButton(Arrays.asList(menu1_sub1,menu1_sub2,menu1_sub3));
 
-        MenuButton menu2 = createMenuItem(MenuType.CLICK, "会员中心", "2", null);
-        MenuButton menu2_sub1 = createMenuItem(MenuType.VIEW, "会员信息", "2-1", wechatMenuUrlInfo);
+        MenuButton menu2 = createMenuItem(MenuType.CLICK, "会员服务", "2", null);
+        MenuButton menu2_sub1 = createMenuItem(MenuType.VIEW, "个人中心", "2-1", wechatMenuUrlInfo);
         MenuButton menu2_sub2 = createMenuItem(MenuType.VIEW, "激活卡片", "2-2", wechatMenuUrlActivecard);
         menu2.setSubButton(Arrays.asList(menu2_sub1,menu2_sub2));
 
-        MenuButton menu3 = createMenuItem(MenuType.VIEW, "代理中心","3", wechatMenuUrlAgent);
+        MenuButton menu3 = createMenuItem(MenuType.VIEW, "合作商家","3", wechatMenuUrlAgent);
 
         //将主菜单加入请求对象
         menu.setButton(Arrays.asList(menu1,menu2,menu3));

@@ -3,7 +3,7 @@ package com.example.card.mapper;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.example.card.entity.Card;
-import com.example.card.entity.CardStaticInfo;
+import com.example.card.model.CardDetailModel4Wechat;
 import com.example.card.model.CardInfoModel;
 import com.example.card.params.CardSearchParam;
 
@@ -19,8 +19,7 @@ import java.util.List;
  */
 public interface CardMapper extends BaseMapper<Card> {
 
-    CardStaticInfo selectStaticInfo();
+    List<CardInfoModel> query(Page<CardInfoModel> page, CardSearchParam param);
 
-
-    List<CardInfoModel> search(CardSearchParam param);
+    CardDetailModel4Wechat search4Wechat(int cardId);
 }

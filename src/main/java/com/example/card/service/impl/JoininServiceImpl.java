@@ -1,16 +1,14 @@
 package com.example.card.service.impl;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.example.card.entity.Agent;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.card.entity.Joinin;
 import com.example.card.enums.AccountCreateType;
 import com.example.card.enums.ApplyType;
 import com.example.card.enums.BindState;
-import com.example.card.mapper.AgentMapper;
 import com.example.card.mapper.JoininMapper;
 import com.example.card.params.JoininSearchParam;
 import com.example.card.service.JoininService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +48,7 @@ public class JoininServiceImpl extends ServiceImpl<JoininMapper, Joinin> impleme
     @Override
     public Page<Joinin> search(JoininSearchParam param) {
         Page<Joinin> page = new Page<>(param.getPage(), param.getPageSize());
-        page.setRecords(this.joininMapper.search(param));
+        page.setRecords(this.joininMapper.search(page,param));
         return page;
     }
 }

@@ -1,7 +1,7 @@
 package com.example;
 
 import com.example.card.config.SmsConfig;
-import com.example.card.wechat.Config;
+import com.example.card.wechat.config.Config;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

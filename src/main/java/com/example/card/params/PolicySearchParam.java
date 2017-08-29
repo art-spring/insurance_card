@@ -15,7 +15,7 @@ public class PolicySearchParam {
     private Date createTimeBegin;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date createTimeEnd;
-    private Integer status;
+    private Integer exportStatus;
 
     public Integer getPage() {
         return page;
@@ -49,11 +49,11 @@ public class PolicySearchParam {
         this.createTimeEnd = createTimeEnd;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Integer getExportStatus() {
+        return exportStatus;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setExportStatus(Integer exportStatus) {
+        this.exportStatus = exportStatus;
     }
 }

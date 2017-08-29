@@ -2,16 +2,19 @@ package com.example.card.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.card.entity.Card;
+import com.example.card.entity.CardType;
 import com.example.card.entity.Policy;
 import com.example.card.enums.CardState;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
 import com.example.card.service.*;
-import com.example.card.utils.ExcelUtil;
+import com.example.card.utils.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.poi.excel.ExcelExportUtil;
+import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by caichunyi on 2017/3/13.
@@ -52,89 +53,139 @@ public class FileUploadController {
     private PolicyService policyService;
 
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public JSONResult<String> upload(MultipartFile file) {
-        JSONResult<String> result = new JSONResult<>();
+    public JSONResult<List<Card>> upload(MultipartFile file) {
+        JSONResult<List<Card>> result = new JSONResult<>();
 
         if (file.isEmpty()) {
             result.setResultCode(ResultCode.EMPTY_FILE);
             return result;
-
         }
+//
+//        //獲取文件名
+//        String fileName = file.getOriginalFilename();
+//        logger.info("upload file name is :   " + fileName);
+//
+//        // 获取文件后缀名
+//
+//        String stuffixName = fileName.substring(fileName.lastIndexOf("."));
+//        logger.info("upload stuffix name is :  " + stuffixName);
 
-        //獲取文件名
-        String fileName = file.getOriginalFilename();
-        logger.info("upload file name is :   " + fileName);
-
-        // 获取文件后缀名
-
-        String stuffixName = fileName.substring(fileName.lastIndexOf("."));
-        logger.info("upload stuffix name is :  " + stuffixName);
-
+        List<Card> cards = new ArrayList<>();
+        List<CardType> updateCardTypes = new ArrayList<>();
         try {
-            Object[][] data = ExcelUtil.read(fileName);
-            if (data != null) {
+            ImportParams params = new ImportParams();
+            params.setSheetNum(1);
+            List<Map<String, Object>> list = ExcelImportUtil.importExcel(file.getInputStream(), Map.class, params);
 
-                Object[] row = null;
+            if (list != null) {
+                for (int i = 0; i < list.size(); i++) {
+                    Map<String, Object> row = list.get(i);
+                    String typeName = row.get("卡片类型").toString().trim();
+                    CardType cardType = cardTypeService.getCardTypeByTypeName(typeName);
 
+                    if (cardType==null){
+                        result.setResultCode(ResultCode.CARD_DATA_ERROR);
+                        return result;
+                    }
 
-                StringBuilder totalBuilder = new StringBuilder();
-                List<Card> cards = new ArrayList<>();
-                for (int i = 0; i < data.length; i++) {
-                    row = data[i];
+                    int cardCount = Integer.parseInt(row.get("生成数量").toString().trim());
 
-                    Card card = new Card();
-                    StringBuilder errorTextBuilder = new StringBuilder();
-                    Map<String, Integer> agentMap = this.agentService.getNameIdMap();
-                    Map<String, Integer> customerMap = this.customerService.getNameIdMap();
-                    Map<String, Integer> cardTypeMap = this.cardTypeService.getNameIdMap();
-                    int j = 0;
-                    this.checkNumber(row[j], ++j, card, errorTextBuilder);
-                    this.checkPassword(row[j], ++j, card, errorTextBuilder);
-                    this.checkAgent(row[j], ++j, card, errorTextBuilder, agentMap);
-                    this.checkCustomer(row[j], ++j, card, errorTextBuilder, customerMap);
-                    this.checkState(row[j], ++j, card, errorTextBuilder);
-                    this.checkCardType(row[j], ++j, card, errorTextBuilder, cardTypeMap);
-                    this.checkActiveDate(row[j], ++j, card, errorTextBuilder);
-                    this.checkUseDate(row[j], ++j, card, errorTextBuilder);
-
-                    if (errorTextBuilder.length() > 0) {
-                        totalBuilder.append(String.format("第%d行数据错误：%s\n", i + 1, errorTextBuilder.toString()));
-                    } else {
+                    for (int j = 0; j < cardCount; j++) {
+                        Card card = new Card();
+                        card.setCardNo(cardType.getPrefix() + String.format("%06d", cardType.getSeq().intValue() + j));
+                        card.setPassword(String.valueOf((int)((Math.random() * 9 + 1) * 100000)));
+                        card.setType(cardType.getId().intValue());
+                        card.setStatus(99);
+                        card.setCreatedTime(new Date());
                         cards.add(card);
                     }
 
-                }
-                if (totalBuilder.length() > 0) {
-                    result.setResultCode(ResultCode.CARD_DATA_ERROR);
-                    result.setData(totalBuilder.toString());
-                } else {
-                    this.cardService.insertBatch(cards);
-                }
+                    cardType.setSeq(cardType.getSeq() + cardCount);
+                    updateCardTypes.add(cardType);
 
+//                    StringBuilder errorTextBuilder = new StringBuilder();
+//                    Map<String, Integer> agentMap = this.agentService.getNameIdMap();
+//                    Map<String, Integer> customerMap = this.customerService.getNameIdMap();
+//                    Map<String, Integer> cardTypeMap = this.cardTypeService.getNameIdMap();
+//                    int j = 0;
+//                    this.checkNumber(row[j], ++j, card, errorTextBuilder);
+//                    this.checkPassword(row[j], ++j, card, errorTextBuilder);
+//                    this.checkAgent(row[j], ++j, card, errorTextBuilder, agentMap);
+//                    this.checkCustomer(row[j], ++j, card, errorTextBuilder, customerMap);
+//                    this.checkState(row[j], ++j, card, errorTextBuilder);
+//                    this.checkCardType(row[j], ++j, card, errorTextBuilder, cardTypeMap);
+//                    this.checkActiveDate(row[j], ++j, card, errorTextBuilder);
+//                    this.checkUseDate(row[j], ++j, card, errorTextBuilder);
 
+//                    if (errorTextBuilder.length() > 0) {
+//                        totalBuilder.append(String.format("第%d行数据错误：%s\n", i + 1, errorTextBuilder.toString()));
+//                    } else {
+//                        cards.add(card);
+//                    }
+
+                }
+//                if (totalBuilder.length() > 0) {
+//                    result.setResultCode(ResultCode.CARD_DATA_ERROR);
+//                    result.setData(totalBuilder.toString());
+//                } else {
+//                    this.cardService.insertBatch(cards);
+//                }
+                cardService.insertBatch(cards);
+                cardTypeService.updateBatchById(updateCardTypes);
             }
         } catch (Exception e) {
             e.printStackTrace();
             result.setResultCode(ResultCode.EXCEPTION);
-            result.setData(e.getMessage());
+            result.setMessage(e.getMessage());
+            result.setData(null);
         }
+        result.setResultCode(ResultCode.SUCCESS);
+        result.setData(cards);
         return result;
     }
 
     // 下载execl文档
     @RequestMapping(value = "policy/download")
-    public void download(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // 告诉浏览器用什么软件可以打开此文件
-        response.setHeader("content-Type", "application/vnd.ms-excel");
-        // 下载文件的默认名称
-        // 初始化时设置 日期和时间模式
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String fileName = "%e6%8a%95%e4%bf%9d%e4%bf%a1%e6%81%af " + sdf.format(new Date()) + ".xls";
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-        List<Policy> list = new ArrayList<>();
-        list.add(policyService.selectById(1));
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), Policy.class, list);
-        workbook.write(response.getOutputStream());
+    public void downloadPolicyData(HttpServletRequest request, HttpServletResponse response, @PathParam("keys") String keys) throws Exception {
+        if (!StringUtil.isEmpty(keys)) {
+            List<String> idList = Arrays.asList(keys.split(","));
+            // 告诉浏览器用什么软件可以打开此文件
+            response.setHeader("content-Type", "application/vnd.ms-excel");
+            // 下载文件的默认名称
+            // 初始化时设置 日期和时间模式
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fileName = "%e6%8a%95%e4%bf%9d%e4%bf%a1%e6%81%af " + sdf.format(new Date()) + ".xls";
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            List<Policy> list = policyService.selectBatchIds(idList);
+            if (list != null) {
+                for (Policy policy : list) {
+                    policy.setExportStatus(1);
+                }
+                policyService.insertOrUpdateBatch(list);
+                Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), Policy.class, list);
+                workbook.write(response.getOutputStream());
+            }
+        }
+    }
+
+    // 下载execl文档
+    @RequestMapping(value = "card/download")
+    public void downloadCardData(HttpServletRequest request, HttpServletResponse response, @PathParam("keys") String keys) throws Exception {
+        if (!StringUtil.isEmpty(keys)) {
+            List<String> idList = Arrays.asList(keys.split(","));
+            // 告诉浏览器用什么软件可以打开此文件
+            response.setHeader("content-Type", "application/vnd.ms-excel");
+            // 下载文件的默认名称
+            // 初始化时设置 日期和时间模式
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fileName = "%e5%8d%a1%e7%89%87%e4%bf%a1%e6%81%af " + sdf.format(new Date()) + ".xls";
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            List<Card> list = cardService.selectBatchIds(idList);
+            if (list != null) {
+                Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), Card.class, list);
+                workbook.write(response.getOutputStream());
+            }
+        }
     }
 
     private void checkState(Object stateName, int colIndex, Card card, StringBuilder errorTextBuilder) {

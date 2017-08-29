@@ -64,8 +64,11 @@ public class PolicyController {
     }
 
     @PostMapping("/select")
-    public JSONResult<Page<Policy>> search(@NotNull @RequestBody PolicySearchParam param) {
+    public JSONResult<Page<Policy>> search(@RequestBody PolicySearchParam param) {
         JSONResult<Page<Policy>> result = new JSONResult<>();
+        if (param.getExportStatus() != null && param.getExportStatus().intValue() == -1) {
+            param.setExportStatus(null);
+        }
         result.setData(this.policyService.search(param));
         return result;
     }

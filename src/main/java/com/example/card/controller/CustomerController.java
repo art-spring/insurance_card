@@ -2,12 +2,14 @@ package com.example.card.controller;
 
 import com.example.card.entity.Card;
 import com.example.card.entity.Customer;
+import com.example.card.enums.SmsCodeCheckResult;
 import com.example.card.model.CustomerBaseInfo;
 import com.example.card.params.CustomerBindWechatParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
 import com.example.card.service.CardService;
 import com.example.card.service.CustomerService;
+import com.example.card.utils.SmsUtil;
 import com.example.card.utils.StringUtil;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -36,23 +38,23 @@ public class CustomerController {
     private CardService cardService;
 
     @PostMapping("wechat/baseInfo/{openId}")
-    public JSONResult<CustomerBaseInfo> getBaseInfo(@PathVariable("openId") String openId){
+    public JSONResult<CustomerBaseInfo> getBaseInfo(@PathVariable("openId") String openId) {
         JSONResult<CustomerBaseInfo> result = new JSONResult<>();
-        Map<String,Object> map = new HashedMap();
-        map.put("wx_id",openId);
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
         List<Customer> tmp = customerService.selectByMap(map);
-        if (tmp!=null&&tmp.size() == 1){
+        if (tmp != null && tmp.size() == 1) {
             Customer customer = tmp.get(0);
             CustomerBaseInfo baseInfo = new CustomerBaseInfo();
             baseInfo.setName(customer.getName());
             baseInfo.setPhoneNumber(customer.getPhoneNumber());
             baseInfo.setHeadUrl(customer.getHeadUrl());
             map.clear();
-            map.put("customer_id",customer.getId().intValue());
+            map.put("customer_id", customer.getId().intValue());
             List<Card> cards = cardService.selectByMap(map);
             baseInfo.setMyLatestCards(cards);
             result.setData(baseInfo);
-        }else{
+        } else {
             result.setResultCode(ResultCode.FAILD);
         }
         return result;
@@ -61,19 +63,19 @@ public class CustomerController {
     @PostMapping("wechat/info/detail/{openId}")
     public JSONResult<Customer> wechatGetDetail(@PathVariable("openId") String openId) {
         JSONResult<Customer> result = new JSONResult<>();
-        Map<String,Object> map = new HashedMap();
-        map.put("wx_id",openId);
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
         List<Customer> tmp = customerService.selectByMap(map);
-        if (tmp!=null&&tmp.size() == 1){
+        if (tmp != null && tmp.size() == 1) {
             result.setData(tmp.get(0));
-        }else{
+        } else {
             result.setResultCode(ResultCode.FAILD);
         }
         return result;
     }
 
     @PostMapping("wechat/info/modify")
-    public JSONResult<Customer> wechatModifyInfo(@RequestBody Map<String,String> params) {
+    public JSONResult<Customer> wechatModifyInfo(@RequestBody Map<String, String> params) {
         JSONResult<Customer> result = new JSONResult<>();
 //        id:_this.state.id,
 //                name:_this.state.name,
@@ -91,30 +93,28 @@ public class CustomerController {
             return result;
         }
 
-        Customer customer  = customerService.selectById(id);
+        Customer customer = customerService.selectById(id);
 
-        if (customer!=null){
+        if (customer != null) {
             customer.setName(name);
             customer.setIdNumber(iDNo);
             customer.setAddress(address);
-            if (!customer.updateById()){
+            if (!customer.updateById()) {
                 result.setResultCode(ResultCode.FAILD);
                 result.setMessage("修改失败");
             }
-        }else{
+        } else {
             result.setResultCode(ResultCode.FAILD);
         }
         return result;
     }
 
 
-
-
     @GetMapping("detail")
     public JSONResult<Customer> detail(@RequestParam("id") int id) {
         JSONResult<Customer> result = new JSONResult<>();
         Customer customer = customerService.selectById(id);
-        if (customer==null){
+        if (customer == null) {
             result.setResultCode(ResultCode.FAILD);
         }
         result.setData(customer);
@@ -129,18 +129,18 @@ public class CustomerController {
             result.setMessage("手机号错误");
         }
         customer.setBindTime(new Date());
-        if (!customer.insert()){
+        if (!customer.insert()) {
             result.setResultCode(ResultCode.FAILD);
         }
         result.setData(customer);
         return result;
     }
 
-    @PostMapping("/bind")
-    public JSONResult<Boolean> bindWechat(@RequestBody CustomerBindWechatParam param){
+    @PostMapping("wechat/bind")
+    public JSONResult<Boolean> bindWechat(@RequestBody CustomerBindWechatParam param) {
         JSONResult<Boolean> result = new JSONResult<>();
 
-        if (StringUtils.isEmpty(param.getPhone())||StringUtils.isEmpty(param.getSmsCode())||StringUtils.isEmpty(param.getOpenId())) {
+        if (StringUtils.isEmpty(param.getPhone()) || StringUtils.isEmpty(param.getSmsCode()) || StringUtils.isEmpty(param.getOpenId())) {
             result.setResultCode(ResultCode.PARAMS_IS_NULL);
             return result;
         }
@@ -151,22 +151,27 @@ public class CustomerController {
             return result;
         }
         //TODO:判断验证码是否正确
-
-        Customer customer = new Customer();
-        customer.setWxId(param.getOpenId());
-        customer.setId(param.getId());
-
-        if (!customerService.bindWechat(customer)){
+        SmsCodeCheckResult checkResult = SmsUtil.checkCode(param.getPhone(), param.getSmsCode(), 10 * 60 * 1000);
+        if (checkResult == SmsCodeCheckResult.MATCH) {
+            Customer customer = new Customer();
+            customer.setWxId(param.getOpenId());
+            customer.setPhoneNumber(param.getPhone());
+            if (!customerService.bindWechat(customer)) {
+                result.setResultCode(ResultCode.FAILD);
+            }
+        } else {
             result.setResultCode(ResultCode.FAILD);
+            result.setMessage(checkResult.getValue());
         }
+
         return result;
     }
 
     @PostMapping("/update")
-    public JSONResult<Boolean> update(@RequestBody Customer customer){
+    public JSONResult<Boolean> update(@RequestBody Customer customer) {
         JSONResult<Boolean> result = new JSONResult<>();
 
-        if (StringUtils.isEmpty(customer.getIdNumber())||StringUtils.isEmpty(customer.getPhoneNumber())) {
+        if (StringUtils.isEmpty(customer.getIdNumber()) || StringUtils.isEmpty(customer.getPhoneNumber())) {
             result.setResultCode(ResultCode.PARAMS_IS_NULL);
             return result;
         }
@@ -177,8 +182,26 @@ public class CustomerController {
             return result;
         }
 
-        if (!customer.updateById()){
+        if (!customer.updateById()) {
             result.setResultCode(ResultCode.FAILD);
+        }
+        return result;
+    }
+
+    @PostMapping(value = "wechat/checkOpenId/{openId}")
+    public JSONResult<Boolean> wechatCheckOpenId(@PathVariable("openId") String openId) {
+        JSONResult<Boolean> result = new JSONResult<>();
+        if (StringUtils.isEmpty(openId)) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
+        List<Customer> tmp = customerService.selectByMap(map);
+        if (tmp != null && tmp.size() > 0) {
+            result.setData(true);
+        } else {
+            result.setData(false);
         }
         return result;
     }

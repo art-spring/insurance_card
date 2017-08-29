@@ -5,6 +5,7 @@ import com.example.card.entity.CardType;
 import com.example.card.mapper.CardTypeMapper;
 import com.example.card.service.CardTypeService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,4 +32,22 @@ public class CardTypeServiceImpl extends ServiceImpl<CardTypeMapper, CardType> i
         }
         return cardTypeMap;
     }
+
+    @Override
+    public List<CardType> getAllCardType() {
+        return this.selectList(null);
+    }
+
+    @Override
+    public CardType getCardTypeByTypeName(String typeName) {
+        Map<String, Object> param = new HashedMap();
+        param.put("name", typeName);
+        List<CardType> result = this.selectByMap(param);
+        if (result != null && result.size() == 1) {
+            return result.get(0);
+        }
+        return null;
+    }
+
+
 }

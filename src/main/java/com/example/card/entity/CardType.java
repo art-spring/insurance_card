@@ -20,6 +20,8 @@ public class CardType extends Model<CardType> {
 
 	private Integer id;
 	private String name;
+	private String prefix;
+	private Integer seq;
 
 
 	public Integer getId() {
@@ -38,6 +40,22 @@ public class CardType extends Model<CardType> {
 	public CardType setName(String name) {
 		this.name = name;
 		return this;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public Integer getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Integer seq) {
+		this.seq = seq;
 	}
 
 	@Override

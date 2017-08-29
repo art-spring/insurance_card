@@ -1,4 +1,4 @@
-package com.example.card.wechat;
+package com.example.card.wechat.config;
 
 /**
  * Created by racoon on 2017/4/17.
@@ -7,7 +7,9 @@ package com.example.card.wechat;
 import com.github.sd4324530.fastweixin.api.config.ApiConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@Component
 @ConfigurationProperties(prefix = "wechat")
 public class Config {
 

@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -39,6 +36,25 @@ public class AgentController {
 
     @Autowired
     private SmsConfig smsConfig;
+
+    @PostMapping("options")
+    public JSONResult<Map<String, List<Map<String, String>>>> getStatusOptions(@RequestBody String[] columnNames) {
+        JSONResult<Map<String, List<Map<String, String>>>> result = new JSONResult<>();
+        Map<String, List<Map<String, String>>> output = new HashMap<>();
+        List<Map<String, String>> options = new ArrayList<>();
+        List<Agent> allAgents = agentService.selectByMap(null);
+        if (allAgents != null && allAgents.size() > 0) {
+            for (Agent agent : allAgents) {
+                Map<String, String> option = new HashMap<>();
+                option.put("text", agent.getName());
+                option.put("value", agent.getId().toString());
+                options.add(option);
+            }
+        }
+        output.put("test", options);
+        result.setData(output);
+        return result;
+    }
 
     @PostMapping(value = "/insert")
     public JSONResult<Agent> insert(@NotNull @RequestBody Agent agent) {
@@ -78,7 +94,7 @@ public class AgentController {
         JSONResult<String> result = new JSONResult<>();
         Agent agent = new Agent();
         agent.setId(id);
-        agent.setStatus(BindState.BIND.getKey());
+        agent.setStatus(BindState.NEED_BIND.getKey());
         agent.setBindTime(new Date());
         agent.updateById();
         return result;
@@ -123,14 +139,14 @@ public class AgentController {
         return result;
     }
 
-    @PostMapping(value = "wechat/apply")
-    public JSONResult<Agent> wechatApply(@RequestBody Map<String, String> params) {
+    @PostMapping(value = "wechat/bind")
+    public JSONResult<Agent> wechatBind(@RequestBody Map<String, String> params) {
 
 //        openId: openId,
 //        smsCode: this.state.smsCode,
 //        applicant: this.state.applicant,
 //        phoneNumber: this.state.phoneNumber
-
+        boolean bindSuccess = false;
 
         JSONResult<Agent> result = new JSONResult<>();
         String openId = params.get("openId");
@@ -144,16 +160,31 @@ public class AgentController {
         }
 
         if (SmsUtil.checkCode(phoneNumber, smsCode, Long.parseLong(smsConfig.getOverTime())) == SmsCodeCheckResult.MATCH) {
-            Agent agent = new Agent();
-            agent.setName(applicant);
-            agent.setPhoneNumber(applicant);
-            agent.setWxId(openId);
-            boolean addResult = this.agentService.createByManager(agent);
-            if (!addResult) {
+            Map<String, Object> map = new HashedMap();
+            map.put("phone_number", phoneNumber);
+            List<Agent> oldAgents = agentService.selectByMap(map);
+            if (oldAgents == null || oldAgents.size() == 0) {
+                Agent agent = new Agent();
+                agent.setName(applicant);
+                agent.setPhoneNumber(phoneNumber);
+                agent.setWxId(openId);
+                agent.setBindTime(new Date());
+                agent.setStatus(2);
+                bindSuccess = agent.insert();
+            } else {
+                Agent oldAgent = oldAgents.get(0);
+                oldAgent.setWxId(openId);
+                oldAgent.setBindTime(new Date());
+                oldAgent.setStatus(2);
+                bindSuccess = oldAgent.updateById();
+            }
+            if (!bindSuccess) {
                 result.setResultCode(ResultCode.FAILD);
+                result.setMessage("绑定失败");
+            } else {
+                result.setMessage("绑定成功");
                 result.setData(null);
             }
-            result.setData(agent);
         } else {
             result.setResultCode(ResultCode.FAILD);
             result.setMessage("短信验证码验证失败");
@@ -184,11 +215,19 @@ public class AgentController {
             Map<String, Object> map = new HashedMap();
             map.put("wx_id", openId);
             List<Agent> tmp = agentService.selectByMap(map);
-            if (tmp!=null&&tmp.size()==1){
-                if (!tmp.get(0).setWxId(null).updateById()){
+            if (tmp != null && tmp.size() == 1) {
+                Agent agent = tmp.get(0);
+                if (!agent.getPhoneNumber().equals(phoneNumber)) {
+                    result.setResultCode(ResultCode.FAILD);
+                    result.setMessage("手机号不匹配，请使用" + agent.getPhoneNumber().substring(0, 2) + "****" + agent.getPhoneNumber().substring(8, 10));
+                    return result;
+                }
+                agent.setStatus(BindState.UN_BIND.getKey());
+                agent.setUnbindTime(new Date());
+                if (!agent.updateById()) {
                     result.setResultCode(ResultCode.FAILD);
                 }
-            }else{
+            } else {
                 result.setResultCode(ResultCode.FAILD);
                 result.setMessage("该微信尚未绑定");
             }
@@ -200,8 +239,8 @@ public class AgentController {
     }
 
     @PostMapping(value = "wechat/checkOpenId/{openId}")
-    public JSONResult<Boolean> wechatCheckApply(@PathVariable("openId") String openId) {
-        JSONResult<Boolean> result = new JSONResult<>();
+    public JSONResult<Integer> wechatCheckOpenId(@PathVariable("openId") String openId) {
+        JSONResult<Integer> result = new JSONResult<>();
         if (StringUtils.isEmpty(openId)) {
             result.setResultCode(ResultCode.PARAMS_IS_NULL);
             return result;
@@ -209,10 +248,10 @@ public class AgentController {
         Map<String, Object> map = new HashedMap();
         map.put("wx_id", openId);
         List<Agent> tmp = agentService.selectByMap(map);
-        if (tmp != null && tmp.size() > 0) {
-            result.setData(true);
+        if (tmp.size() == 1) {
+            result.setData(tmp.get(0).getStatus().intValue());
         } else {
-            result.setData(false);
+            result.setData(-1);
         }
         return result;
     }

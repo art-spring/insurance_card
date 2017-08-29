@@ -11,21 +11,12 @@
 		<result column="status" property="status" />
 		<result column="agent_id" property="agentId" />
 		<result column="customer_id" property="customerId" />
+		<result column="created_time" property="createdTime" />
 		<result column="active_time" property="activeTime" />
 		<result column="used_time" property="usedTime" />
 	</resultMap>
 
-	<select id="selectStaticInfo" resultType="com.example.card.entity.CardStaticInfo">
-		SELECT
-		COUNT(1) AS totalCount,
-		IFNULL(SUM(IF(status = 1, 1, 0)) ,0)AS activeCount,
-		IFNULL(SUM(IF(status = 2, 1, 0)),0) AS usedCount
-		FROM
-		card ;
-
-	</select>
-
-	<select id="search" parameterType="com.example.card.params.CardSearchParam" resultType="com.example.card.model.CardInfoModel">
+	<select id="search4Wechat" parameterType="int" resultType="com.example.card.model.CardDetailModel4Wechat">
 		SELECT
 		c.id ,
 		c.card_no as cardNo,
@@ -37,6 +28,35 @@
 		a.name as agentName,
 		cs.id as customerId,
 		cs.name as customerName,
+		c.active_time as activeTime,
+		c.used_time as usedTime,
+		p.id as policyId,
+		p.holder,
+		p.recognizee,
+		p.start_time as policyStartTime,
+		p.end_time as policyEndTime,
+		p.create_time as policyCreateTime,
+		p.export_status as policyExportStatus
+		FROM card c
+		left join card_type cy on cy.id = c.type
+		left join agent a on a.id = c.agent_id
+		left join customer cs on cs.id = c.customer_id
+		left join policy p on p.card_id = c.id
+		WHERE c.id = #{cardId}
+	</select>
+
+
+	<select id="query" parameterType="com.example.card.params.CardSearchParam" resultType="com.example.card.model.CardInfoModel">
+		SELECT
+		c.id ,
+		c.card_no as cardNo,
+		c.password,
+		c.status,
+		c.type,
+		a.name as agentName,
+		cs.name as customerName,
+		c.created_time as createdTime,
+		c.grant_time as grantTime,
 		c.active_time as activeTime,
 		c.used_time as usedTime
 		FROM card c
@@ -51,7 +71,10 @@
 			AND c.type =#{type}
 		</if>
 		<if test="keyword != null">
-		AND (c.card_no like CONCAT('%',#{keyword},'%') or cs.name like CONCAT('%',#{keyword},'%') or a.name like CONCAT('%',#{keyword},'%') or cy.name like CONCAT('%',#{keyword},'%'))
+			AND (c.card_no like CONCAT('%',#{keyword},'%') or cs.name like CONCAT('%',#{keyword},'%') or a.name like CONCAT('%',#{keyword},'%') or cy.name like CONCAT('%',#{keyword},'%'))
+		</if>
+		<if test="agentId != null">
+			AND a.id = #{agentId}
 		</if>
 		<if test="agentName != null">
 			AND a.name = #{agentName}
@@ -62,6 +85,14 @@
 		<if test="applyDateEnd !=null">
 			AND <![CDATA[c.active_time <=#{applyDateEnd} ]]>
 		</if>
+		<if test="grantDateBegin !=null">
+			AND <![CDATA[c.grant_time >=#{grantDateBegin} ]]>
+		</if>
+		<if test="grantDateEnd !=null">
+			AND <![CDATA[c.grant_time <=#{grantDateEnd} ]]>
+		</if>
+		order by c.id desc
 	</select>
+
 
 </mapper>

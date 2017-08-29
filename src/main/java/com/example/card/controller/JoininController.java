@@ -135,6 +135,8 @@ public class JoininController {
 
     }
 
+
+    //微信端
     @PostMapping(value = "wechat/apply")
     public JSONResult<Joinin> wechatApply(@RequestBody Map<String, String> params) {
 

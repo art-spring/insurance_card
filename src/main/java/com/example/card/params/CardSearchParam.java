@@ -1,9 +1,7 @@
 package com.example.card.params;
 
 import com.example.card.utils.DateJsonDeserializer;
-import com.example.card.utils.DateJsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
@@ -15,12 +13,18 @@ public class CardSearchParam {
     private Integer page = 1;
     private Integer pageSize = 10;
     private Integer status;
+    private Integer agentId;
     private String agentName;
     private String keyword;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date applyDateBegin;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date applyDateEnd;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    private Date grantDateBegin;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    private Date grantDateEnd;
+
     private Integer type;
 
     public Integer getPage() {
@@ -45,6 +49,14 @@ public class CardSearchParam {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(Integer agentId) {
+        this.agentId = agentId;
     }
 
     public String getAgentName() {
@@ -85,5 +97,21 @@ public class CardSearchParam {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Date getGrantDateBegin() {
+        return grantDateBegin;
+    }
+
+    public void setGrantDateBegin(Date grantDateBegin) {
+        this.grantDateBegin = grantDateBegin;
+    }
+
+    public Date getGrantDateEnd() {
+        return grantDateEnd;
+    }
+
+    public void setGrantDateEnd(Date grantDateEnd) {
+        this.grantDateEnd = grantDateEnd;
     }
 }

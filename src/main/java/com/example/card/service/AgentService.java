@@ -27,5 +27,5 @@ public interface AgentService extends IService<Agent> {
 
     Page<Agent> search(AgentSearchParam param);
 
-
+    boolean checkOpenId(String openId);
 }

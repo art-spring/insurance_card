@@ -35,7 +35,7 @@ public class PolicyServiceImpl extends ServiceImpl<PolicyMapper, Policy> impleme
     @Override
     public Page<Policy> search(PolicySearchParam param) {
         Page<Policy> page = new Page<>(param.getPage(), param.getPageSize());
-        page.setRecords(this.policyMapper.search(param));
+        page.setRecords(this.policyMapper.search(page,param));
         return page;
     }
 }

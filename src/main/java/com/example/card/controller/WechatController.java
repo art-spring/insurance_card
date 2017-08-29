@@ -4,7 +4,10 @@ package com.example.card.controller;
  * Created by racoon on 2017/4/17.
  */
 
-import com.example.card.wechat.Config;
+import com.alibaba.druid.util.StringUtils;
+import com.example.card.service.AgentService;
+import com.example.card.service.CustomerService;
+import com.example.card.wechat.config.Config;
 import com.github.sd4324530.fastweixin.api.OauthAPI;
 import com.github.sd4324530.fastweixin.api.response.OauthGetTokenResponse;
 import com.github.sd4324530.fastweixin.message.BaseMsg;
@@ -30,6 +33,11 @@ public class WechatController extends WeixinControllerSupport {
     @Autowired
     private Config config;
 
+    @Autowired
+    private AgentService agentService;
+    @Autowired
+    private CustomerService customerService;
+
 
     @Value("${wechat.redirect.joinin.url}")
     private String redirectJoininUrl;
@@ -42,6 +50,8 @@ public class WechatController extends WeixinControllerSupport {
     @Value("${wechat.redirect.joinin.param.openId}")
     private String redirectJoininOpenId;
 
+    @Value("${wechat.redirect.customer.bind.url}")
+    private String redirectCustomerBindUrl;
     @Value("${wechat.redirect.info.url}")
     private String redirectInfoUrl;
     @Value("${wechat.redirect.info.param.userId}")
@@ -68,6 +78,8 @@ public class WechatController extends WeixinControllerSupport {
 
     @Value("${wechat.redirect.agent.url}")
     private String redirectAgentUrl;
+    @Value("${wechat.redirect.agent.apply.url}")
+    private String redirectAgentApplyUrl;
     @Value("${wechat.redirect.agent.param.userId}")
     private String redirectAgentUserId;
     @Value("${wechat.redirect.agent.param.appId}")
@@ -123,36 +135,19 @@ public class WechatController extends WeixinControllerSupport {
     public ModelAndView handleRedirectAgent(@RequestParam("code") String code) {
         String redirect = "redirect:" + redirectAgentUrl;
 
-//        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
-//        OauthGetTokenResponse response = oauthAPI.getToken(code);
+        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
+        OauthGetTokenResponse response = oauthAPI.getToken(code);
 //
-//        String openid = response.getOpenid();
-//        if (StringUtils.isEmpty(openid)) {
-//            return new ModelAndView(redirect);
-//        }
-//
-//        ApiResult result = dubboService.getWechatUser(openid);
-//        if (ResultCode.ERROR.getCode() == result.getCode()) {
-//            UserAPI userAPI = new UserAPI(config.getApiConfig());
-//            GetUserInfoResponse userInfo = userAPI.getUserInfo(openid);
-//            if (StringUtils.isEmpty(userInfo.getOpenid())) {
-//                return new ModelAndView(redirect);
-//            }
-//
-//            result = dubboService.createWechatUser(userInfo);
-//            if (ResultCode.ERROR.getCode() == result.getCode()) {
-//                return new ModelAndView(redirect);
-//            }
-//        }
-//
-//        Integer wechatUserId = ((WechatUserOutput)result.getData()).getWechatUserId();
-//
-//        String  jsApiTicket = config.getApiConfig().getJsApiTicket();
-//
-//        redirect += "?" + redirectToutiaoParamUserId + "=" + String.valueOf(wechatUserId);
-//        redirect += "&" + redirectToutiaoParamAppId + "=" + config.getApiConfig().getAppid();
-//        redirect += "&" + redirectToutiaoParamJsapiTicket + "=" + jsApiTicket
-//        redirect += "&" + redirectToutiaoParamOpenId + "=" + openid;
+        String openid = response.getOpenid();
+        if (StringUtils.isEmpty(openid)) {
+            return new ModelAndView(redirect);
+        }
+
+        if (!agentService.checkOpenId(openid)) {
+            redirect = "redirect:" + redirectAgentApplyUrl;
+        }
+
+        redirect += "?" + "openId=" + openid;
 
         return new ModelAndView(redirect);
     }
@@ -161,36 +156,18 @@ public class WechatController extends WeixinControllerSupport {
     public ModelAndView handleRedirectActivecard(@RequestParam("code") String code) {
         String redirect = "redirect:" + redirectActivecardUrl;
 
-//        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
-//        OauthGetTokenResponse response = oauthAPI.getToken(code);
-//
-//        String openid = response.getOpenid();
-//        if (StringUtils.isEmpty(openid)) {
-//            return new ModelAndView(redirect);
-//        }
-//
-//        ApiResult result = dubboService.getWechatUser(openid);
-//        if (ResultCode.ERROR.getCode() == result.getCode()) {
-//            UserAPI userAPI = new UserAPI(config.getApiConfig());
-//            GetUserInfoResponse userInfo = userAPI.getUserInfo(openid);
-//            if (StringUtils.isEmpty(userInfo.getOpenid())) {
-//                return new ModelAndView(redirect);
-//            }
-//
-//            result = dubboService.createWechatUser(userInfo);
-//            if (ResultCode.ERROR.getCode() == result.getCode()) {
-//                return new ModelAndView(redirect);
-//            }
-//        }
-//
-//        Integer wechatUserId = ((WechatUserOutput)result.getData()).getWechatUserId();
-//
-//        String  jsApiTicket = config.getApiConfig().getJsApiTicket();
-//
-//        redirect += "?" + redirectToutiaoParamUserId + "=" + String.valueOf(wechatUserId);
-//        redirect += "&" + redirectToutiaoParamAppId + "=" + config.getApiConfig().getAppid();
-//        redirect += "&" + redirectToutiaoParamJsapiTicket + "=" + jsApiTicket
-//        redirect += "&" + redirectToutiaoParamOpenId + "=" + openid;
+        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
+        OauthGetTokenResponse response = oauthAPI.getToken(code);
+
+        String openid = response.getOpenid();
+        if (StringUtils.isEmpty(openid)) {
+            return new ModelAndView(redirect);
+        }
+
+        if (!customerService.checkOpenId(openid)) {
+            redirect = "redirect:" + redirectCustomerBindUrl;
+        }
+        redirect += "?openId=" + openid;
 
         return new ModelAndView(redirect);
     }
@@ -199,36 +176,13 @@ public class WechatController extends WeixinControllerSupport {
     public ModelAndView handleRedirectJoinin(@RequestParam("code") String code) {
         String redirect = "redirect:" + redirectJoininUrl;
 
-//        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
-//        OauthGetTokenResponse response = oauthAPI.getToken(code);
-//
-//        String openid = response.getOpenid();
-//        if (StringUtils.isEmpty(openid)) {
-//            return new ModelAndView(redirect);
-//        }
-//
-//        ApiResult result = dubboService.getWechatUser(openid);
-//        if (ResultCode.ERROR.getCode() == result.getCode()) {
-//            UserAPI userAPI = new UserAPI(config.getApiConfig());
-//            GetUserInfoResponse userInfo = userAPI.getUserInfo(openid);
-//            if (StringUtils.isEmpty(userInfo.getOpenid())) {
-//                return new ModelAndView(redirect);
-//            }
-//
-//            result = dubboService.createWechatUser(userInfo);
-//            if (ResultCode.ERROR.getCode() == result.getCode()) {
-//                return new ModelAndView(redirect);
-//            }
-//        }
-//
-//        Integer wechatUserId = ((WechatUserOutput)result.getData()).getWechatUserId();
-//
-//        String  jsApiTicket = config.getApiConfig().getJsApiTicket();
-//
-//        redirect += "?" + redirectToutiaoParamUserId + "=" + String.valueOf(wechatUserId);
-//        redirect += "&" + redirectToutiaoParamAppId + "=" + config.getApiConfig().getAppid();
-//        redirect += "&" + redirectToutiaoParamJsapiTicket + "=" + jsApiTicket
-//        redirect += "&" + redirectToutiaoParamOpenId + "=" + openid;
+        OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
+        OauthGetTokenResponse response = oauthAPI.getToken(code);
+
+        String openid = response.getOpenid();
+        if (StringUtils.isEmpty(openid)) {
+            return new ModelAndView(redirect);
+        }
 
         return new ModelAndView(redirect);
     }
@@ -240,38 +194,16 @@ public class WechatController extends WeixinControllerSupport {
         OauthAPI oauthAPI = new OauthAPI(config.getApiConfig());
         OauthGetTokenResponse response = oauthAPI.getToken(code);
 
-//
-//        String openid = response.getOpenid();
-//        if (StringUtils.isEmpty(openid)) {
-//            return new ModelAndView(redirect);
-//        }
-//
-//        String headImgUrl = null;
-//        ApiResult result = dubboService.getWechatUser(openid);
-//        if (ResultCode.ERROR.getCode() == result.getCode()) {
-//            UserAPI userAPI = new UserAPI(config.getApiConfig());
-//            GetUserInfoResponse userInfo = userAPI.getUserInfo(openid);
-//            if (StringUtils.isEmpty(userInfo.getOpenid())) {
-//                return new ModelAndView(redirect);
-//            }
-//
-//            result = dubboService.createWechatUser(userInfo);
-//            if (ResultCode.ERROR.getCode() == result.getCode()) {
-//                return new ModelAndView(redirect);
-//            }
-//
-//            headImgUrl = userInfo.getHeadimgurl();
-//        } else {
-//            WechatUserOutput data = (WechatUserOutput) result.getData();
-//            headImgUrl = data.getHeadimgurl();
-//        }
-//
-//        String userinfo = Util.encodeWechatUserInfo(openid, headImgUrl);
-//        if (StringUtils.isEmpty(userinfo)) {
-//            return new ModelAndView(redirect);
-//        }
-//
-//        redirect += "?" + redirectBindParamUserInfo + "=" + userinfo;
+
+        String openid = response.getOpenid();
+        if (StringUtils.isEmpty(openid)) {
+            return new ModelAndView(redirect);
+        }
+        if (!customerService.checkOpenId(openid)) {
+            redirect = "redirect:" + redirectCustomerBindUrl;
+        }
+
+        redirect += "?openId=" + openid;
 
         return new ModelAndView(redirect);
     }

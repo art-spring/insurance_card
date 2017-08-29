@@ -2,15 +2,15 @@ package com.example.card.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.card.entity.Agent;
 import com.example.card.enums.AccountCreateType;
 import com.example.card.enums.ApplyType;
 import com.example.card.enums.BindState;
 import com.example.card.mapper.AgentMapper;
-import com.example.card.model.CardInfoModel;
 import com.example.card.params.AgentSearchParam;
 import com.example.card.service.AgentService;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +64,19 @@ public class AgentServiceImpl extends ServiceImpl<AgentMapper, Agent> implements
     @Override
     public Page<Agent> search(AgentSearchParam param) {
         Page<Agent> page = new Page<>(param.getPage(), param.getPageSize());
-        page.setRecords(this.agentMapper.search(param));
+        page.setRecords(this.agentMapper.search(page, param));
         return page;
+    }
+
+    @Override
+    public boolean checkOpenId(String openId) {
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
+        List<Agent> tmp = agentMapper.selectByMap(map);
+        if (tmp.size() == 1) {
+            return true;
+        }
+        return false;
     }
 
 

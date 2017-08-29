@@ -1,8 +1,9 @@
 package com.example.card.model;
 
+import com.example.card.utils.DateJsonDeserializer;
 import com.example.card.utils.DateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jdk.Exported;
 
 import java.util.Date;
 
@@ -16,13 +17,18 @@ public class CardInfoModel {
     private String password;
     private Integer status;
     private Integer type;
-    private String typeName;
-    private Integer agentId;
     private String agentName;
-    private Integer customerId;
     private String customerName;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
+    private Date createdTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
+    private Date grantTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     private Date activeTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     private Date usedTime;
 
@@ -66,22 +72,6 @@ public class CardInfoModel {
         this.type = type;
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public Integer getAgentId() {
-        return agentId;
-    }
-
-    public void setAgentId(Integer agentId) {
-        this.agentId = agentId;
-    }
-
     public String getAgentName() {
         return agentName;
     }
@@ -90,20 +80,20 @@ public class CardInfoModel {
         this.agentName = agentName;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
-    }
-
     public String getCustomerName() {
         return customerName;
     }
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
     public Date getActiveTime() {
@@ -120,5 +110,13 @@ public class CardInfoModel {
 
     public void setUsedTime(Date usedTime) {
         this.usedTime = usedTime;
+    }
+
+    public Date getGrantTime() {
+        return grantTime;
+    }
+
+    public void setGrantTime(Date grantTime) {
+        this.grantTime = grantTime;
     }
 }
