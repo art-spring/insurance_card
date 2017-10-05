@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.card.entity.Policy;
 import com.example.card.mapper.PolicyMapper;
+import com.example.card.model.PolicyInfo;
 import com.example.card.params.PolicySearchParam;
 import com.example.card.service.PolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -33,9 +35,22 @@ public class PolicyServiceImpl extends ServiceImpl<PolicyMapper, Policy> impleme
     }
 
     @Override
-    public Page<Policy> search(PolicySearchParam param) {
-        Page<Policy> page = new Page<>(param.getPage(), param.getPageSize());
-        page.setRecords(this.policyMapper.search(page,param));
+    public Page<PolicyInfo> search(PolicySearchParam param) {
+        Page<PolicyInfo> page = new Page<>(param.getPage(), param.getPageSize());
+        page.setRecords(this.policyMapper.query(page,param));
         return page;
+    }
+
+    @Override
+    public List<PolicyInfo> searchByIds(List<String> ids) {
+        return policyMapper.queryByIds(ids);
+    }
+
+    @Override
+    public boolean setRecordExport(List<String> ids) {
+        if (policyMapper.setRecordExport(ids) > 0){
+            return true;
+        }
+        return false;
     }
 }

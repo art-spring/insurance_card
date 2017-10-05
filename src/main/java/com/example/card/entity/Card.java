@@ -44,17 +44,22 @@ public class Card extends Model<Card> {
     private Integer agentId;
     @TableField("customer_id")
     private Integer customerId;
-    @Excel(name = "创建时间", orderNum = "6", format = "yyyy-MM-dd")
+    @Excel(name = "发放时间", orderNum = "6", format = "yyyy-MM-dd")
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
+    @TableField("grant_time")
+    private Date grantTime;
+    @Excel(name = "创建时间", orderNum = "7", format = "yyyy-MM-dd")
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     @TableField("created_time")
     private Date createdTime;
-    @Excel(name = "激活时间", orderNum = "7", format = "yyyy-MM-dd")
+    @Excel(name = "激活时间", orderNum = "8", format = "yyyy-MM-dd")
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     @TableField("active_time")
     private Date activeTime;
-    @Excel(name = "使用时间", orderNum = "8", format = "yyyy-MM-dd")
+    @Excel(name = "使用时间", orderNum = "9", format = "yyyy-MM-dd")
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     @TableField("used_time")
@@ -147,6 +152,14 @@ public class Card extends Model<Card> {
     public Card setUsedTime(Date usedTime) {
         this.usedTime = usedTime;
         return this;
+    }
+
+    public Date getGrantTime() {
+        return grantTime;
+    }
+
+    public void setGrantTime(Date grantTime) {
+        this.grantTime = grantTime;
     }
 
     @Override

@@ -11,6 +11,9 @@ import java.util.Date;
 public class PolicySearchParam {
     private Integer page = 1;
     private Integer pageSize = 10;
+    private Integer cardType;
+    private String startCardNo;
+    private String endCardNo;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date createTimeBegin;
     @JsonDeserialize(using = DateJsonDeserializer.class)
@@ -55,5 +58,29 @@ public class PolicySearchParam {
 
     public void setExportStatus(Integer exportStatus) {
         this.exportStatus = exportStatus;
+    }
+
+    public Integer getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(Integer cardType) {
+        this.cardType = cardType;
+    }
+
+    public String getStartCardNo() {
+        return startCardNo;
+    }
+
+    public void setStartCardNo(String startCardNo) {
+        this.startCardNo = startCardNo;
+    }
+
+    public String getEndCardNo() {
+        return endCardNo;
+    }
+
+    public void setEndCardNo(String endCardNo) {
+        this.endCardNo = endCardNo;
     }
 }

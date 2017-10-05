@@ -94,7 +94,7 @@ public class AgentController {
         JSONResult<String> result = new JSONResult<>();
         Agent agent = new Agent();
         agent.setId(id);
-        agent.setStatus(BindState.NEED_BIND.getKey());
+        agent.setStatus(BindState.BIND.getKey());
         agent.setBindTime(new Date());
         agent.updateById();
         return result;
@@ -139,8 +139,8 @@ public class AgentController {
         return result;
     }
 
-    @PostMapping(value = "wechat/bind")
-    public JSONResult<Agent> wechatBind(@RequestBody Map<String, String> params) {
+    @PostMapping(value = "wechat/apply")
+    public JSONResult<Agent> wechatApply(@RequestBody Map<String, String> params) {
 
 //        openId: openId,
 //        smsCode: this.state.smsCode,
@@ -168,21 +168,25 @@ public class AgentController {
                 agent.setName(applicant);
                 agent.setPhoneNumber(phoneNumber);
                 agent.setWxId(openId);
-                agent.setBindTime(new Date());
-                agent.setStatus(2);
+                agent.setStatus(BindState.APPLY.getKey());
                 bindSuccess = agent.insert();
             } else {
                 Agent oldAgent = oldAgents.get(0);
-                oldAgent.setWxId(openId);
-                oldAgent.setBindTime(new Date());
-                oldAgent.setStatus(2);
-                bindSuccess = oldAgent.updateById();
+                if (StringUtil.isEmpty(oldAgent.getWxId())) {
+                    oldAgent.setWxId(openId);
+                    oldAgent.setStatus(BindState.APPLY.getKey());
+                    bindSuccess = oldAgent.updateById();
+                }else{
+                    result.setResultCode(ResultCode.FAILD);
+                    result.setMessage("状态出错");
+                    return result;
+                }
             }
             if (!bindSuccess) {
                 result.setResultCode(ResultCode.FAILD);
-                result.setMessage("绑定失败");
+                result.setMessage("申请失败");
             } else {
-                result.setMessage("绑定成功");
+                result.setMessage("申请成功");
                 result.setData(null);
             }
         } else {
@@ -222,6 +226,7 @@ public class AgentController {
                     result.setMessage("手机号不匹配，请使用" + agent.getPhoneNumber().substring(0, 2) + "****" + agent.getPhoneNumber().substring(8, 10));
                     return result;
                 }
+                agent.setWxId(null);
                 agent.setStatus(BindState.UN_BIND.getKey());
                 agent.setUnbindTime(new Date());
                 if (!agent.updateById()) {

@@ -1,10 +1,8 @@
 package com.example.card.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.example.card.entity.Card;
-import com.example.card.entity.CardType;
-import com.example.card.entity.Customer;
-import com.example.card.entity.Policy;
+import com.example.card.entity.*;
+import com.example.card.model.PolicyInfo;
 import com.example.card.params.PolicySearchParam;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
@@ -42,6 +40,36 @@ public class PolicyController {
 
     @Autowired
     private CardTypeService cardTypeService;
+    @PostMapping("options")
+    public JSONResult<Map<String, List<Map<String, Object>>>> getStatusOptions(@RequestBody String[] columnNames) {
+        JSONResult<Map<String, List<Map<String, Object>>>> result = new JSONResult<>();
+        if (columnNames == null || columnNames.length == 0) {
+            result.setResultCode(ResultCode.PARAMS_IS_NULL);
+            return result;
+        }
+        Map<String, List<Map<String, Object>>> output = new HashMap<>();
+        for (String columnName : columnNames) {
+            switch (columnName) {
+                case "cardType":
+                    List<Map<String, Object>> options2 = new ArrayList<>();
+                    List<CardType> allType = cardTypeService.selectByMap(null);
+                    if (allType != null && allType.size() > 0) {
+                        for (CardType type : allType) {
+                            Map<String, Object> option = new HashMap<>();
+                            option.put("text", type.getName());
+                            option.put("value", type.getId().intValue());
+                            options2.add(option);
+                        }
+                    }
+                    output.put("cardType", options2);
+                    break;
+                default:
+                    break;
+            }
+        }
+        result.setData(output);
+        return result;
+    }
 
     @PostMapping(value = "/update")
     public JSONResult<Policy> update(@RequestParam("keys") String keys, @RequestBody Policy updateInfo) {
@@ -64,10 +92,13 @@ public class PolicyController {
     }
 
     @PostMapping("/select")
-    public JSONResult<Page<Policy>> search(@RequestBody PolicySearchParam param) {
-        JSONResult<Page<Policy>> result = new JSONResult<>();
+    public JSONResult<Page<PolicyInfo>> search(@RequestBody PolicySearchParam param) {
+        JSONResult<Page<PolicyInfo>> result = new JSONResult<>();
         if (param.getExportStatus() != null && param.getExportStatus().intValue() == -1) {
             param.setExportStatus(null);
+        }
+        if (param.getCardType() != null && param.getCardType().intValue() == -1) {
+            param.setCardType(null);
         }
         result.setData(this.policyService.search(param));
         return result;
@@ -103,26 +134,22 @@ public class PolicyController {
     public JSONResult<Map<String, String>> wechatCheckInfo(@PathVariable("openId") String openId,
                                                            @PathVariable("cardId") String cardId) {
         JSONResult<Map<String, String>> result = new JSONResult<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("wx_id", openId);
-        List<Customer> tmp = customerService.selectByMap(map);
-        if (tmp != null && tmp.size() == 1) {
-            Customer customer = tmp.get(0);
+        Customer customer = customerService.findCustomerByOpenId(openId);
+        if (customer != null) {
             Card card = cardService.selectById(cardId);
             if (card == null) {
                 result.setResultCode(ResultCode.FAILD);
-                result.setMessage("id错误");
+                result.setMessage("卡片id错误");
                 return result;
             }
             if (card.getCustomerId().intValue() != customer.getId().intValue()) {
                 result.setResultCode(ResultCode.FAILD);
-                result.setMessage("卡片不匹配");
+                result.setMessage("数据不匹配");
                 return result;
             }
+
             Map<String, String> output = new HashMap<>();
-
             CardType cardType = cardTypeService.selectById(card.getType().intValue());
-
             if (cardType == null) {
                 output.put("typeName", "类型未定义");
             } else {
@@ -131,6 +158,8 @@ public class PolicyController {
 
             output.put("name", customer.getName());
             output.put("address", customer.getAddress());
+            output.put("idNumber", customer.getIdNumber());
+            output.put("phone", customer.getPhoneNumber());
             result.setData(output);
         } else {
             result.setResultCode(ResultCode.FAILD);
@@ -145,29 +174,31 @@ public class PolicyController {
                                               @PathVariable("cardId") String cardId,
                                               @RequestBody Policy policy) {
         JSONResult<Policy> result = new JSONResult<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("wx_id", openId);
-        List<Customer> tmp = customerService.selectByMap(map);
-        if (tmp != null && tmp.size() == 1) {
-            Customer customer = tmp.get(0);
+        Customer customer = customerService.findCustomerByOpenId(openId);
+        if (customer != null) {
             Card card = cardService.selectById(cardId);
             if (card == null) {
                 result.setResultCode(ResultCode.FAILD);
-                result.setMessage("id错误");
-                return result;
+                result.setMessage("卡片id错误");
+            } else {
+                if (card.getCustomerId().intValue() != customer.getId().intValue()) {
+                    result.setResultCode(ResultCode.FAILD);
+                    result.setMessage("数据不匹配");
+                } else {
+                    if (!policy.insert()) {
+                        result.setResultCode(ResultCode.FAILD);
+                        result.setMessage("录入失败");
+                    } else {
+                        //设置卡片已使用
+                        if (!cardService.useCard(card)) {
+                            result.setResultCode(ResultCode.FAILD);
+                            result.setMessage("录入失败");
+                            //TODO:删除失败怎么办
+                            policy.deleteById();
+                        }
+                    }
+                }
             }
-            if (card.getCustomerId().intValue() != customer.getId().intValue()) {
-                result.setResultCode(ResultCode.FAILD);
-                result.setMessage("卡片不匹配");
-                return result;
-            }
-
-            if (!policyService.createByManager(policy))
-                result.setResultCode(ResultCode.FAILD);
-
-            //设置卡片未已使用
-            if (!cardService.useCard(card))
-                result.setResultCode(ResultCode.FAILD);
         } else {
             result.setResultCode(ResultCode.FAILD);
             result.setMessage("会员未绑定");

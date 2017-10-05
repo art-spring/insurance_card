@@ -76,4 +76,15 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         return false;
     }
 
+    @Override
+    public Customer findCustomerByOpenId(String openId) {
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
+        List<Customer> tmp = customerMapper.selectByMap(map);
+        if (tmp != null && tmp.size() == 1) {
+            return tmp.get(0);
+        }
+        return null;
+    }
+
 }

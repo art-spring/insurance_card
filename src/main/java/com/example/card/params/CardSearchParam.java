@@ -13,6 +13,8 @@ public class CardSearchParam {
     private Integer page = 1;
     private Integer pageSize = 10;
     private Integer status;
+    private String startCardNo;
+    private String endCardNo;
     private Integer agentId;
     private String agentName;
     private String keyword;
@@ -113,5 +115,21 @@ public class CardSearchParam {
 
     public void setGrantDateEnd(Date grantDateEnd) {
         this.grantDateEnd = grantDateEnd;
+    }
+
+    public String getStartCardNo() {
+        return startCardNo;
+    }
+
+    public void setStartCardNo(String startCardNo) {
+        this.startCardNo = startCardNo;
+    }
+
+    public String getEndCardNo() {
+        return endCardNo;
+    }
+
+    public void setEndCardNo(String endCardNo) {
+        this.endCardNo = endCardNo;
     }
 }

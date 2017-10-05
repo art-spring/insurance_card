@@ -1,5 +1,10 @@
 package com.example.card.model;
 
+import com.example.card.utils.DateJsonDeserializer;
+import com.example.card.utils.DateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.util.Date;
 
 /**
@@ -16,13 +21,28 @@ public class CardDetailModel4Wechat {
     private String agentName;
     private Integer customerId;
     private String customerName;
+    private String customerPhone;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date activeTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date usedTime;
     private Integer policyId;
     private String holder;
+    private String holderIdNo;
+    private String holderPhone;
     private String recognizee;
+    private String recognizeeIdNo;
+    private String recognizeePhone;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date policyStartTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date policyEndTime;
+    @JsonDeserialize(using = DateJsonDeserializer.class)
+    @JsonSerialize(using = DateJsonSerializer.class)
     private Date policyCreateTime;
     private Integer policyExportStatus;
 
@@ -176,5 +196,45 @@ public class CardDetailModel4Wechat {
 
     public void setPolicyExportStatus(Integer policyExportStatus) {
         this.policyExportStatus = policyExportStatus;
+    }
+
+    public String getHolderIdNo() {
+        return holderIdNo;
+    }
+
+    public void setHolderIdNo(String holderIdNo) {
+        this.holderIdNo = holderIdNo;
+    }
+
+    public String getHolderPhone() {
+        return holderPhone;
+    }
+
+    public void setHolderPhone(String holderPhone) {
+        this.holderPhone = holderPhone;
+    }
+
+    public String getRecognizeeIdNo() {
+        return recognizeeIdNo;
+    }
+
+    public void setRecognizeeIdNo(String recognizeeIdNo) {
+        this.recognizeeIdNo = recognizeeIdNo;
+    }
+
+    public String getRecognizeePhone() {
+        return recognizeePhone;
+    }
+
+    public void setRecognizeePhone(String recognizeePhone) {
+        this.recognizeePhone = recognizeePhone;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
     }
 }

@@ -9,10 +9,13 @@ import com.example.card.enums.BindState;
 import com.example.card.mapper.JoininMapper;
 import com.example.card.params.JoininSearchParam;
 import com.example.card.service.JoininService;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -50,5 +53,16 @@ public class JoininServiceImpl extends ServiceImpl<JoininMapper, Joinin> impleme
         Page<Joinin> page = new Page<>(param.getPage(), param.getPageSize());
         page.setRecords(this.joininMapper.search(page,param));
         return page;
+    }
+
+    @Override
+    public boolean checkOpenId(String openId) {
+        Map<String, Object> map = new HashedMap();
+        map.put("wx_id", openId);
+        List<Joinin> tmp = joininMapper.selectByMap(map);
+        if (tmp.size() == 1) {
+            return true;
+        }
+        return false;
     }
 }

@@ -3,7 +3,10 @@ package com.example.card.service;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.example.card.entity.Policy;
+import com.example.card.model.PolicyInfo;
 import com.example.card.params.PolicySearchParam;
+
+import java.util.List;
 
 /**
  * <p>
@@ -21,5 +24,9 @@ public interface PolicyService extends IService<Policy> {
      */
     boolean createByManager(Policy policy);
 
-    Page<Policy> search(PolicySearchParam param);
+    Page<PolicyInfo> search(PolicySearchParam param);
+
+    List<PolicyInfo> searchByIds(List<String> ids);
+
+    boolean setRecordExport(List<String> ids);
 }

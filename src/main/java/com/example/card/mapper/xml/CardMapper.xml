@@ -28,11 +28,16 @@
 		a.name as agentName,
 		cs.id as customerId,
 		cs.name as customerName,
+		cs.phone_number as customerPhone,
 		c.active_time as activeTime,
 		c.used_time as usedTime,
 		p.id as policyId,
 		p.holder,
+		p.holder_id_no as holderIdNo,
+		p.holder_phone as holderPhone,
 		p.recognizee,
+		p.recognizee_id_no as recognizeeIdNo,
+		p.recognizee_phone as recognizeePhone,
 		p.start_time as policyStartTime,
 		p.end_time as policyEndTime,
 		p.create_time as policyCreateTime,
@@ -54,6 +59,7 @@
 		c.status,
 		c.type,
 		a.name as agentName,
+		c.customer_id as customerId,
 		cs.name as customerName,
 		c.created_time as createdTime,
 		c.grant_time as grantTime,
@@ -90,6 +96,12 @@
 		</if>
 		<if test="grantDateEnd !=null">
 			AND <![CDATA[c.grant_time <=#{grantDateEnd} ]]>
+		</if>
+		<if test="startCardNo !=null" >
+			AND <![CDATA[c.card_no >=#{startCardNo} ]]>
+		</if>
+		<if test="endCardNo !=null" >
+			AND <![CDATA[c.card_no <=#{endCardNo} ]]>
 		</if>
 		order by c.id desc
 	</select>

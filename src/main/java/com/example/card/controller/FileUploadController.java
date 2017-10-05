@@ -3,8 +3,8 @@ package com.example.card.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.card.entity.Card;
 import com.example.card.entity.CardType;
-import com.example.card.entity.Policy;
 import com.example.card.enums.CardState;
+import com.example.card.model.PolicyInfo;
 import com.example.card.result.JSONResult;
 import com.example.card.result.ResultCode;
 import com.example.card.service.*;
@@ -156,13 +156,10 @@ public class FileUploadController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String fileName = "%e6%8a%95%e4%bf%9d%e4%bf%a1%e6%81%af " + sdf.format(new Date()) + ".xls";
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            List<Policy> list = policyService.selectBatchIds(idList);
+            List<PolicyInfo> list = policyService.searchByIds(idList);
             if (list != null) {
-                for (Policy policy : list) {
-                    policy.setExportStatus(1);
-                }
-                policyService.insertOrUpdateBatch(list);
-                Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), Policy.class, list);
+                policyService.setRecordExport(idList);
+                Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(), PolicyInfo.class, list);
                 workbook.write(response.getOutputStream());
             }
         }

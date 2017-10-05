@@ -7,6 +7,7 @@ package com.example.card.controller;
 import com.alibaba.druid.util.StringUtils;
 import com.example.card.service.AgentService;
 import com.example.card.service.CustomerService;
+import com.example.card.service.JoininService;
 import com.example.card.wechat.config.Config;
 import com.github.sd4324530.fastweixin.api.OauthAPI;
 import com.github.sd4324530.fastweixin.api.response.OauthGetTokenResponse;
@@ -37,6 +38,8 @@ public class WechatController extends WeixinControllerSupport {
     private AgentService agentService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private JoininService joininService;
 
 
     @Value("${wechat.redirect.joinin.url}")
@@ -167,6 +170,7 @@ public class WechatController extends WeixinControllerSupport {
         if (!customerService.checkOpenId(openid)) {
             redirect = "redirect:" + redirectCustomerBindUrl;
         }
+
         redirect += "?openId=" + openid;
 
         return new ModelAndView(redirect);
@@ -183,6 +187,8 @@ public class WechatController extends WeixinControllerSupport {
         if (StringUtils.isEmpty(openid)) {
             return new ModelAndView(redirect);
         }
+
+        redirect += "?openId=" + openid;
 
         return new ModelAndView(redirect);
     }

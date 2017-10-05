@@ -107,6 +107,9 @@ public class CardController {
         if (param.getStatus() != null && param.getStatus().intValue() == -1) {
             param.setStatus(null);
         }
+        if (param.getType() != null && param.getType().intValue() == -1) {
+            param.setType(null);
+        }
         result.setData(this.cardService.search(param));
         return result;
     }
@@ -163,8 +166,10 @@ public class CardController {
             for (Card card : oldCards) {
                 if (updateCardStatus)
                     card.setStatus(updateInfo.getStatus());
-                if (updateAgent)
+                if (updateAgent) {
                     card.setAgentId(updateInfo.getAgentId().intValue());
+                    card.setGrantTime(new Date());
+                }
                 if (updateCustomer)
                     card.setCustomerId(updateInfo.getCustomerId().intValue());
             }
@@ -189,6 +194,7 @@ public class CardController {
         Map<String, Object> map = new HashMap<>();
         map.put("wx_id", openId);
         List<Agent> tmp = agentService.selectByMap(map);
+
         if (tmp != null && tmp.size() > 0) {
             Agent agent = agentService.selectByMap(map).get(0);
             param.setAgentId(agent.getId().intValue());
@@ -237,14 +243,12 @@ public class CardController {
             return result;
         }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("wx_id", openId);
-        List<Customer> tmp = customerService.selectByMap(map);
-        if (tmp != null && tmp.size() > 0) {
+        Customer customer = customerService.findCustomerByOpenId(openId);
+        if (customer != null) {
             CardDetailModel4Wechat detail = cardService.search4Wechat(Integer.parseInt(cardId));
             if (detail == null) {
                 result.setResultCode(ResultCode.FAILD);
-                result.setMessage("id错误");
+                result.setMessage("卡片ID错误");
             }
             result.setData(detail);
         } else {

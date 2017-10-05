@@ -21,4 +21,6 @@ public interface CustomerService extends IService<Customer> {
     boolean bindWechat(Customer customer);
 
     boolean unbindWechat(Customer customer);
+
+    Customer findCustomerByOpenId(String openId);
 }

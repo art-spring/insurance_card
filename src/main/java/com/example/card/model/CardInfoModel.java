@@ -18,6 +18,7 @@ public class CardInfoModel {
     private Integer status;
     private Integer type;
     private String agentName;
+    private Integer customerId;
     private String customerName;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
@@ -78,6 +79,14 @@ public class CardInfoModel {
 
     public void setAgentName(String agentName) {
         this.agentName = agentName;
+    }
+
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public String getCustomerName() {
