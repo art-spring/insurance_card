@@ -1,8 +1,7 @@
 package com.example.card.controller;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
-import com.example.card.entity.Admin;
+import com.jcwenhua.card.entity.Admin;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

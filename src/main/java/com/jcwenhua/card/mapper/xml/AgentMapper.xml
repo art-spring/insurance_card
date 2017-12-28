@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jcwenhua.card.mapper.AgentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.jcwenhua.card.entity.Agent">
+		<id column="id" property="id" />
+		<result column="wx_id" property="wxId" />
+		<result column="phone_number" property="phoneNumber" />
+		<result column="name" property="name" />
+		<result column="apply_type" property="applyType" />
+		<result column="status" property="status" />
+		<result column="create_type" property="createType" />
+		<result column="create_time" property="createTime" />
+		<result column="bind_time" property="bindTime" />
+		<result column="unbind_time" property="unbindTime" />
+	</resultMap>
+
+	<select id="search" parameterType="com.jcwenhua.card.params.AgentSearchParam" resultMap="BaseResultMap">
+		SELECT
+		a.id as Id,
+		a.wx_id as wxId,
+		a.phone_number as phoneNumber,
+		a.name as name,
+		a.apply_type as applyType,
+		a.status as status,
+		a.create_type as createType,
+		a.create_time as createTime,
+		a.bind_time as bindTime,
+		a.unbind_time as unbindTime
+		FROM agent a
+		WHERE 1=1
+		<if test="status != null">
+			AND a.status =#{status}
+		</if>
+		<if test="applyDateBegin !=null">
+			AND <![CDATA[a.apply_type >=#{applyDateBegin} ]]>
+		</if>
+		<if test="applyDateEnd !=null">
+			AND <![CDATA[a.apply_type <=#{applyDateEnd} ]]>
+		</if>
+	</select>
+
+</mapper>
