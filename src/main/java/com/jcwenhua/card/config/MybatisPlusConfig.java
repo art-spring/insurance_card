@@ -25,7 +25,7 @@ import javax.sql.DataSource;
  * Created by caichunyi on 2017/3/13.
  */
 @Configuration
-@MapperScan(basePackages = "com.example.card.mapper")
+@MapperScan(basePackages = "com.jcwenhua.card.mapper")
 public class MybatisPlusConfig {
     @Autowired
     private DataSource dataSource;

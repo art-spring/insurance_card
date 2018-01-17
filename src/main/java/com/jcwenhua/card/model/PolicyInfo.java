@@ -41,7 +41,7 @@ public class PolicyInfo {
     private String holderPhone;
     @Excel(name = "被投保人", orderNum = "4")
     private String recognizee;
-    @Excel(name = "被投保人身份证号", orderNum = "5")
+    @Excel(name = "被投保人证件号", orderNum = "5")
     private String recognizeeIdNo;
     @Excel(name = "被投保人手机号", orderNum = "6")
     private String recognizeePhone;

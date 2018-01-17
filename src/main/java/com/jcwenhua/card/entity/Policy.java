@@ -38,7 +38,7 @@ public class Policy extends Model<Policy> {
 	@TableField("holder_address")
 	@Excel(name = "投保地区（地级市）", orderNum = "3")
 	private String holderAddress;
-	@TableField("holder_address")
+	@TableField("holder_birthday")
 	@Excel(name = "投保人生日", orderNum = "4")
 	@JsonDeserialize(using = DateJsonDeserializer.class)
 	@JsonSerialize(using = DateJsonSerializer.class)

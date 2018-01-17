@@ -1,6 +1,9 @@
 package com.jcwenhua.card.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.jcwenhua.card.entity.Card;
+import com.jcwenhua.card.entity.CardType;
+import com.jcwenhua.card.entity.Customer;
 import com.jcwenhua.card.entity.Policy;
 import com.jcwenhua.card.model.PolicyInfo;
 import com.jcwenhua.card.params.PolicySearchParam;
@@ -10,14 +13,14 @@ import com.jcwenhua.card.service.CardService;
 import com.jcwenhua.card.service.CardTypeService;
 import com.jcwenhua.card.service.CustomerService;
 import com.jcwenhua.card.service.PolicyService;
-import com.jcwenhua.card.entity.Card;
-import com.jcwenhua.card.entity.CardType;
-import com.jcwenhua.card.entity.Customer;
+import com.jcwenhua.card.utils.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -43,6 +46,7 @@ public class PolicyController {
 
     @Autowired
     private CardTypeService cardTypeService;
+
     @PostMapping("options")
     public JSONResult<Map<String, List<Map<String, Object>>>> getStatusOptions(@RequestBody String[] columnNames) {
         JSONResult<Map<String, List<Map<String, Object>>>> result = new JSONResult<>();
@@ -75,8 +79,8 @@ public class PolicyController {
     }
 
     @PostMapping(value = "/update")
-    public JSONResult<Policy> update(@RequestParam("keys") String keys, @RequestBody Policy updateInfo) {
-        JSONResult<Policy> result = new JSONResult<>();
+    public JSONResult<PolicyInfo> update(@RequestParam("keys") String keys, @RequestBody PolicyInfo updateInfo) {
+        JSONResult<PolicyInfo> result = new JSONResult<>();
         String[] ids = keys.split(",");
         List<Policy> oldPolicies = this.policyService.selectBatchIds(Arrays.asList(ids));
 
@@ -86,6 +90,8 @@ public class PolicyController {
             for (Policy policy : oldPolicies) {
                 if (updateStatus)
                     policy.setExportStatus(updateInfo.getExportStatus().intValue());
+
+                policy.setHolderAddress(updateInfo.getHolderAddress());
             }
             this.policyService.insertOrUpdateBatch(oldPolicies);
         } else {
@@ -188,16 +194,50 @@ public class PolicyController {
                     result.setResultCode(ResultCode.FAILD);
                     result.setMessage("数据不匹配");
                 } else {
-                    if (!policy.insert()) {
+                    if (card.getStatus().intValue() == 2) {
                         result.setResultCode(ResultCode.FAILD);
-                        result.setMessage("录入失败");
+                        result.setMessage("卡片已绑定，请尝试刷新界面");
                     } else {
-                        //设置卡片已使用
-                        if (!cardService.useCard(card)) {
+                        //处理生日
+                        String idNo = policy.getHolderIdNo();
+                        if (!StringUtil.isEmpty(idNo)) {
+                            String birthday = idNo.substring(6, 14);
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                                sdf.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                                Date birthdate = sdf.parse(birthday);
+                                policy.setHolderBirthday(birthdate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //处理被投保人证件号
+                        String idNoR = policy.getRecognizeeIdNo();
+                        if (!StringUtil.isEmpty(idNoR) && idNoR.length() > 2) {
+
+                            if (idNoR.startsWith("1-")) {
+                                //身份证号码
+                                policy.setRecognizeeIdNo(idNoR.split("-")[1]);
+                            } else {
+                                //出生医学证明号码
+                                policy.setRecognizeeIdNo("(出生医学证明号码)" + idNoR.split("-")[1]);
+                            }
+                        } else {
+                            policy.setRecognizeeIdNo(null);
+                        }
+
+                        if (!policy.insert()) {
                             result.setResultCode(ResultCode.FAILD);
                             result.setMessage("录入失败");
-                            //TODO:删除失败怎么办
-                            policy.deleteById();
+                        } else {
+                            //设置卡片已使用
+                            if (!cardService.useCard(card)) {
+                                result.setResultCode(ResultCode.FAILD);
+                                result.setMessage("录入失败");
+                                //TODO:删除失败怎么办
+                                policy.deleteById();
+                            }
                         }
                     }
                 }
