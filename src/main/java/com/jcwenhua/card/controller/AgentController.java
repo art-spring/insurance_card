@@ -113,6 +113,19 @@ public class AgentController {
         return result;
     }
 
+    @GetMapping("/delete")
+    public JSONResult<String> delete(@RequestParam("keys") String keys) {
+        JSONResult<String> result = new JSONResult<>();
+        String[] ids = keys.split(",");
+        if (agentService.deleteBatchIds(Arrays.asList(ids))){
+            result.setMessage("删除成功");
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("删除失败");
+        }
+        return result;
+    }
+
     @PostMapping(value = "/update")
     public JSONResult<Agent> update(@RequestParam("keys") String keys, @RequestBody Agent updateInfo) {
         JSONResult<Agent> result = new JSONResult<>();

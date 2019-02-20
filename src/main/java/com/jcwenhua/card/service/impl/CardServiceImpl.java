@@ -74,7 +74,9 @@ public class CardServiceImpl extends ServiceImpl<CardMapper, Card> implements Ca
     public Page<CardInfoModel> search(CardSearchParam param) {
 
         Page<CardInfoModel> page = new Page<>(param.getPage(), param.getPageSize());
-
+        if ("".equals(param.getKeyword())){
+            param.setKeyword(null);
+        }
         page.setRecords(this.cardMapper.query(page, param));
         return page;
     }

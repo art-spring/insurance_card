@@ -29,4 +29,6 @@ public interface PolicyService extends IService<Policy> {
     List<PolicyInfo> searchByIds(List<String> ids);
 
     boolean setRecordExport(List<String> ids);
+
+
 }

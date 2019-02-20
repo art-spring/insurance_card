@@ -1,9 +1,9 @@
 package com.jcwenhua.card.model;
 
-import com.jcwenhua.card.utils.DateJsonDeserializer;
-import com.jcwenhua.card.utils.DateJsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.jcwenhua.card.utils.DateJsonDeserializer;
+import com.jcwenhua.card.utils.DateJsonSerializer;
 import org.jeecgframework.poi.excel.annotation.Excel;
 import org.jeecgframework.poi.excel.annotation.ExcelTarget;
 
@@ -15,13 +15,14 @@ import java.util.Date;
 @ExcelTarget("policyInfo")
 public class PolicyInfo {
 
+    @Excel(name = "投保编号id（请勿修改）", orderNum = "1")
     private Integer id;
-    private Integer cardId;
+//    private Integer cardId;
     @Excel(name = "卡片编号", orderNum = "1")
     private String cardNo;
-    @Excel(name = "卡片密码", orderNum = "1")
-    private String cardPassword;
-    @Excel(name = "卡片类型", orderNum = "1", replace = {"A类_1", "B类_2", "C类_3", "D类_4", "E类_5"})
+//    @Excel(name = "卡片密码", orderNum = "1")
+//    private String cardPassword;
+//    @Excel(name = "卡片类型", orderNum = "1", replace = {"A类_1", "B类_2", "C类_3", "D类_4", "E类_5"})
     private String cardType;
     @Excel(name = "投保人", orderNum = "1")
     private String holder;
@@ -34,7 +35,7 @@ public class PolicyInfo {
     @JsonSerialize(using = DateJsonSerializer.class)
     private Date holderBirthday;
     @Excel(name = "投保人性别", orderNum = "4" ,replace = {"男_0", "女_1"})
-    private Integer holderGender;
+    private String holderGender;
     @Excel(name = "投保人职业类别", orderNum = "4")
     private String holderOccupation;
     @Excel(name = "投保人手机号", orderNum = "4")
@@ -47,19 +48,16 @@ public class PolicyInfo {
     private String recognizeePhone;
     @Excel(name = "关系", orderNum = "6",replace = {"本人_1", "母亲_2", "父亲_3", "儿子_4", "女儿_5", "配偶_6"})
     private String holderRecognizeeRelation;
-    @Excel(name = "生效时间", orderNum = "7", format = "yyyy-MM-dd")
-    @JsonDeserialize(using = DateJsonDeserializer.class)
-    @JsonSerialize(using = DateJsonSerializer.class)
-    private Date startTime;
-    @Excel(name = "失效时间", orderNum = "8", format = "yyyy-MM-dd")
-    @JsonDeserialize(using = DateJsonDeserializer.class)
-    @JsonSerialize(using = DateJsonSerializer.class)
-    private Date endTime;
-    @Excel(name = "创建时间", orderNum = "9", format = "yyyy-MM-dd")
+    @Excel(name = "保单号", orderNum = "6")
+    private String policyNumber;
+    @Excel(name = "生效时间", orderNum = "7")
+    private String startTime;
+    @Excel(name = "保险期限", orderNum = "8")
+    private String endTime;
+    @Excel(name = "信息录入时间", orderNum = "9", format = "yyyy-MM-dd")
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     private Date createTime;
-    @Excel(name = "导出状态", orderNum = "10", replace = {"未导出_0", "已导出_1"})
     private Integer exportStatus;
 
     public Integer getId() {
@@ -70,28 +68,12 @@ public class PolicyInfo {
         this.id = id;
     }
 
-    public Integer getCardId() {
-        return cardId;
-    }
-
-    public void setCardId(Integer cardId) {
-        this.cardId = cardId;
-    }
-
     public String getCardNo() {
         return cardNo;
     }
 
     public void setCardNo(String cardNo) {
         this.cardNo = cardNo;
-    }
-
-    public String getCardPassword() {
-        return cardPassword;
-    }
-
-    public void setCardPassword(String cardPassword) {
-        this.cardPassword = cardPassword;
     }
 
     public String getCardType() {
@@ -150,19 +132,19 @@ public class PolicyInfo {
         this.recognizeePhone = recognizeePhone;
     }
 
-    public Date getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
@@ -172,14 +154,6 @@ public class PolicyInfo {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getExportStatus() {
-        return exportStatus;
-    }
-
-    public void setExportStatus(Integer exportStatus) {
-        this.exportStatus = exportStatus;
     }
 
     public String getHolderAddress() {
@@ -198,11 +172,11 @@ public class PolicyInfo {
         this.holderBirthday = holderBirthday;
     }
 
-    public Integer getHolderGender() {
+    public String getHolderGender() {
         return holderGender;
     }
 
-    public void setHolderGender(Integer holderGender) {
+    public void setHolderGender(String holderGender) {
         this.holderGender = holderGender;
     }
 
@@ -220,5 +194,21 @@ public class PolicyInfo {
 
     public void setHolderRecognizeeRelation(String holderRecognizeeRelation) {
         this.holderRecognizeeRelation = holderRecognizeeRelation;
+    }
+
+    public String getPolicyNumber() {
+        return policyNumber;
+    }
+
+    public void setPolicyNumber(String policyNumber) {
+        this.policyNumber = policyNumber;
+    }
+
+    public Integer getExportStatus() {
+        return exportStatus;
+    }
+
+    public void setExportStatus(Integer exportStatus) {
+        this.exportStatus = exportStatus;
     }
 }

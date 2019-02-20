@@ -41,6 +41,7 @@
         p.recognizee,
         p.recognizee_id_no as recognizeeIdNo,
         p.recognizee_phone as recognizeePhone,
+        p.policy_number as policyNumber,
         p.start_time as policyStartTime,
         p.end_time as policyEndTime,
         p.holder_recognizee_relation as holderRecognizeeRelation,
@@ -89,7 +90,7 @@
             AND a.id = #{agentId}
         </if>
         <if test="agentName != null">
-            AND a.name = #{agentName}
+            AND a.name like CONCAT('%',#{agentName},'%')
         </if>
         <if test="applyDateBegin !=null">
             AND <![CDATA[c.active_time >=#{applyDateBegin} ]]>

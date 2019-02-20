@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by racoon on 2017/4/26.
  */
 @RestController
+@CrossOrigin
 @RequestMapping("/smscode")
 public class SmsController {
     @Autowired
@@ -19,7 +20,6 @@ public class SmsController {
     public JSONResult<Integer> getCode(@PathVariable("phoneNumber") String phoneNubmer) {
         JSONResult<Integer> result = new JSONResult<>();
         Integer code = smsCodeService.getCode(phoneNubmer);
-        result.setData(code);
         if (code == null) {
             result.setResultCode(ResultCode.FAILD);
         }

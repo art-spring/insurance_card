@@ -84,14 +84,27 @@ public class PolicyController {
         String[] ids = keys.split(",");
         List<Policy> oldPolicies = this.policyService.selectBatchIds(Arrays.asList(ids));
 
-        boolean updateStatus = updateInfo.getExportStatus() != null;
+//        boolean updateStatus = updateInfo.getExportStatus() != null;
 
         if (oldPolicies != null && oldPolicies.size() > 0) {
             for (Policy policy : oldPolicies) {
-                if (updateStatus)
-                    policy.setExportStatus(updateInfo.getExportStatus().intValue());
-
                 policy.setHolderAddress(updateInfo.getHolderAddress());
+                policy.setHolderBirthday(updateInfo.getHolderBirthday());
+                policy.setHolderGender(updateInfo.getHolderGender());
+                policy.setHolderIdNo(updateInfo.getHolderIdNo());
+                policy.setHolderOccupation(updateInfo.getHolderOccupation());
+                policy.setHolderPhone(updateInfo.getHolderPhone());
+                policy.setHolder(updateInfo.getHolder());
+                policy.setHolderRecognizeeRelation(updateInfo.getHolderRecognizeeRelation());
+
+                policy.setRecognizeeIdNo("".equals(updateInfo.getRecognizeeIdNo()) ? null : updateInfo.getRecognizeeIdNo());
+                policy.setRecognizee("".equals(updateInfo.getRecognizee()) ? null : updateInfo.getRecognizee());
+                policy.setRecognizeePhone("".equals(updateInfo.getRecognizeePhone()) ? null : updateInfo.getRecognizeePhone());
+
+                policy.setPolicyNumber("".equals(updateInfo.getPolicyNumber()) ? null : updateInfo.getPolicyNumber());
+
+                policy.setStartTime("".equals(updateInfo.getStartTime()) ? null : updateInfo.getStartTime());
+                policy.setEndTime("".equals(updateInfo.getEndTime()) ? null : updateInfo.getEndTime());
             }
             this.policyService.insertOrUpdateBatch(oldPolicies);
         } else {
@@ -227,6 +240,9 @@ public class PolicyController {
                             policy.setRecognizeeIdNo(null);
                         }
 
+                        //设置录入时间
+                        policy.setCreateTime(new Date());
+
                         if (!policy.insert()) {
                             result.setResultCode(ResultCode.FAILD);
                             result.setMessage("录入失败");
@@ -245,6 +261,19 @@ public class PolicyController {
         } else {
             result.setResultCode(ResultCode.FAILD);
             result.setMessage("会员未绑定");
+        }
+        return result;
+    }
+
+    @GetMapping("/delete")
+    public JSONResult<String> delete(@RequestParam("keys") String keys) {
+        JSONResult<String> result = new JSONResult<>();
+        String[] ids = keys.split(",");
+        if (policyService.deleteBatchIds(Arrays.asList(ids))){
+            result.setMessage("删除成功");
+        }else{
+            result.setResultCode(ResultCode.FAILD);
+            result.setMessage("删除失败");
         }
         return result;
     }

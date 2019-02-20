@@ -149,11 +149,14 @@ public class CardController {
         List<String> cardIds = Arrays.asList(ids.split(","));
         if (!this.cardService.deleteBatchIds(cardIds)) {
             result.setResultCode(ResultCode.FAILD);
+            result.setMessage("删除失败");
         } else {
             result.setData(cardIds.size());
+            result.setMessage("删除成功");
         }
         return result;
     }
+
 
     @PostMapping(value = "/update")
     public JSONResult<Card> update(@RequestParam("keys") String keys, @RequestBody Card updateInfo) {
@@ -290,18 +293,18 @@ public class CardController {
                 result.setResultCode(ResultCode.FAILD);
                 result.setMessage("id错误");
             } else {
-                if (card.getStatus() != 0){//卡片如果状态不是未使用，则无法继续
+                if (card.getStatus() != 0) {//卡片如果状态不是未使用，则无法继续
                     result.setResultCode(ResultCode.FAILD);
-                    if (card.getStatus() == 99){
+                    if (card.getStatus() == 99) {
                         result.setMessage("添加失败，卡片尚未绑定代理商");
-                    }else if (card.getStatus() == 1){
+                    } else if (card.getStatus() == 1) {
                         result.setMessage("添加失败，卡片已被添加");
-                    }else if (card.getStatus() == 2){
+                    } else if (card.getStatus() == 2) {
                         result.setMessage("添加失败，卡片已使用");
-                    }else{
-                        result.setMessage("添加失败，位置错误");
+                    } else {
+                        result.setMessage("添加失败，未知错误");
                     }
-                }else{
+                } else {
                     if (card.getPassword().equals(password)) {
                         card.setActiveTime(new Date());
                         card.setStatus(1);
@@ -351,16 +354,26 @@ public class CardController {
                     result.setResultCode(ResultCode.FAILD);
                     result.setMessage("卡片已激活");
                 } else {
-                    if (card.getPassword().equals(password)) {
-                        card.setCustomerId(tmp.get(0).getId().intValue());
-                        card.setStatus(1);
-                        if (!card.updateById()) {
+                    if (card.getAgentId() != null) {
+                        if (card.getStatus().intValue() == 0) {
+                            if (card.getPassword().equals(password)) {
+                                card.setCustomerId(tmp.get(0).getId().intValue());
+                                card.setStatus(1);
+                                if (!card.updateById()) {
+                                    result.setResultCode(ResultCode.FAILD);
+                                    result.setMessage("激活失败");
+                                }
+                            } else {
+                                result.setResultCode(ResultCode.FAILD);
+                                result.setMessage("密码错误");
+                            }
+                        } else {
                             result.setResultCode(ResultCode.FAILD);
-                            result.setMessage("激活失败");
+                            result.setMessage("该卡片归属代理商尚未缴费，无法激活");
                         }
                     } else {
                         result.setResultCode(ResultCode.FAILD);
-                        result.setMessage("密码错误");
+                        result.setMessage("尚未绑定代理商，无法激活");
                     }
                 }
             } else {

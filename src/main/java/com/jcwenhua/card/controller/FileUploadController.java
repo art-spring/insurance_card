@@ -3,6 +3,7 @@ package com.jcwenhua.card.controller;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.jcwenhua.card.entity.Card;
 import com.jcwenhua.card.entity.CardType;
+import com.jcwenhua.card.entity.Policy;
 import com.jcwenhua.card.enums.CardState;
 import com.jcwenhua.card.model.PolicyInfo;
 import com.jcwenhua.card.result.JSONResult;
@@ -52,8 +53,80 @@ public class FileUploadController {
     @Autowired
     private PolicyService policyService;
 
-    @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public JSONResult<List<Card>> upload(MultipartFile file) {
+    @RequestMapping(value = "policy/upload", method = RequestMethod.POST)
+    public JSONResult<List<Card>> policyUpload(MultipartFile file) {
+        JSONResult<List<Card>> result = new JSONResult<>();
+
+        if (file.isEmpty()) {
+            result.setResultCode(ResultCode.EMPTY_FILE);
+            return result;
+        }
+
+        try {
+            ImportParams params = new ImportParams();
+            params.setSheetNum(1);
+            List<Map<String, Object>> list = ExcelImportUtil.importExcel(file.getInputStream(), Map.class, params);
+            List<Policy> oldPolicyInfos = new ArrayList<>();
+            if (list != null) {
+                for (int i = 0; i < list.size(); i++) {
+                    Map<String, Object> row = list.get(i);
+                    String id = row.get("投保编号id（请勿修改）").toString().trim();
+                    if (StringUtil.isEmpty(id)) {
+                        result.setResultCode(ResultCode.EXCEPTION);
+                        result.setMessage("id为空");
+                        result.setData(null);
+                        return result;
+                    }
+                    Policy tmp = policyService.selectById(id);
+                    if (tmp == null || tmp.getId() == null) {
+                        result.setResultCode(ResultCode.EXCEPTION);
+                        result.setMessage("id错误");
+                        result.setData(null);
+                        return result;
+                    }
+                    String policyNumber = row.get("保单号").toString().trim();
+                    if (StringUtil.isEmpty(policyNumber)) {
+                        result.setResultCode(ResultCode.EXCEPTION);
+                        result.setMessage("id为" + id + "的保单号为空");
+                        result.setData(null);
+                        return result;
+                    }
+                    tmp.setPolicyNumber(policyNumber);
+
+                    String startTime = row.get("生效时间").toString().trim();
+                    if (StringUtil.isEmpty(startTime)) {
+                        result.setResultCode(ResultCode.EXCEPTION);
+                        result.setMessage("id为" + id + "的生效时间为空");
+                        result.setData(null);
+                        return result;
+                    }
+                    tmp.setStartTime(startTime);
+
+                    String endTime = row.get("保险期限").toString().trim();
+                    if (StringUtil.isEmpty(endTime)) {
+                        result.setResultCode(ResultCode.EXCEPTION);
+                        result.setMessage("id为" + id + "的保险期限为空");
+                        result.setData(null);
+                        return result;
+                    }
+                    tmp.setEndTime(endTime);
+
+                    oldPolicyInfos.add(tmp);
+                }
+                policyService.updateBatchById(oldPolicyInfos);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setResultCode(ResultCode.EXCEPTION);
+            result.setMessage(e.getMessage());
+            result.setData(null);
+        }
+        result.setResultCode(ResultCode.SUCCESS);
+        return result;
+    }
+
+    @RequestMapping(value = "card/upload", method = RequestMethod.POST)
+    public JSONResult<List<Card>> cardUpload(MultipartFile file) {
         JSONResult<List<Card>> result = new JSONResult<>();
 
         if (file.isEmpty()) {
@@ -83,7 +156,7 @@ public class FileUploadController {
                     String typeName = row.get("卡片类型").toString().trim();
                     CardType cardType = cardTypeService.getCardTypeByTypeName(typeName);
 
-                    if (cardType==null){
+                    if (cardType == null) {
                         result.setResultCode(ResultCode.CARD_DATA_ERROR);
                         return result;
                     }
@@ -93,7 +166,7 @@ public class FileUploadController {
                     for (int j = 0; j < cardCount; j++) {
                         Card card = new Card();
                         card.setCardNo(cardType.getPrefix() + String.format("%06d", cardType.getSeq().intValue() + j));
-                        card.setPassword(String.valueOf((int)((Math.random() * 9 + 1) * 100000)));
+                        card.setPassword(String.valueOf((int) ((Math.random() * 9 + 1) * 100000)));
                         card.setType(cardType.getId().intValue());
                         card.setStatus(99);
                         card.setCreatedTime(new Date());

@@ -19,6 +19,15 @@ public class PolicySearchParam {
     @JsonDeserialize(using = DateJsonDeserializer.class)
     private Date createTimeEnd;
     private Integer exportStatus;
+    private String keyword;
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 
     public Integer getPage() {
         return page;

@@ -66,6 +66,7 @@
         p.recognizee_id_no as recognizeeIdNo,
         p.recognizee_phone as recognizeePhone,
         p.holder_recognizee_relation as holderRecognizeeRelation,
+        p.policy_number as policyNumber,
         p.start_time as startTime,
         p.end_time as endTime,
         p.export_status as exportStatus,
@@ -90,6 +91,10 @@
         <if test="endCardNo !=null">
             AND <![CDATA[c.card_no <=#{endCardNo} ]]>
         </if>
+        <if test="keyword != null">
+            AND (p.holder like CONCAT('%',#{keyword},'%') or p.recognizee like CONCAT('%',#{keyword},'%') or p.holder_id_no like
+            CONCAT('%',#{keyword},'%') or p.recognizee_id_no like CONCAT('%',#{keyword},'%'))
+        </if>
         order by p.id desc
     </select>
 
@@ -104,6 +109,7 @@
         p.holder_id_no as holderIdNo,
         p.holder_phone as holderPhone,
         p.holder_gender as holderGender,
+        p.policy_number as policyNumber,
         p.recognizee as recognizee,
         p.recognizee_id_no as recognizeeIdNo,
         p.recognizee_phone as recognizeePhone,

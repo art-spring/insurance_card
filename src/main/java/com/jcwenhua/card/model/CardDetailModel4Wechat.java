@@ -39,13 +39,10 @@ public class CardDetailModel4Wechat {
     private String recognizeeIdNo;
     private String recognizeePhone;
     private Integer recognizeeGender;
+    private String policyNumber;
     private String holderRecognizeeRelation;
-    @JsonDeserialize(using = DateJsonDeserializer.class)
-    @JsonSerialize(using = DateJsonSerializer.class)
-    private Date policyStartTime;
-    @JsonDeserialize(using = DateJsonDeserializer.class)
-    @JsonSerialize(using = DateJsonSerializer.class)
-    private Date policyEndTime;
+    private String policyStartTime;
+    private String policyEndTime;
     @JsonDeserialize(using = DateJsonDeserializer.class)
     @JsonSerialize(using = DateJsonSerializer.class)
     private Date policyCreateTime;
@@ -171,19 +168,19 @@ public class CardDetailModel4Wechat {
         this.recognizee = recognizee;
     }
 
-    public Date getPolicyStartTime() {
+    public String getPolicyStartTime() {
         return policyStartTime;
     }
 
-    public void setPolicyStartTime(Date policyStartTime) {
+    public void setPolicyStartTime(String policyStartTime) {
         this.policyStartTime = policyStartTime;
     }
 
-    public Date getPolicyEndTime() {
+    public String getPolicyEndTime() {
         return policyEndTime;
     }
 
-    public void setPolicyEndTime(Date policyEndTime) {
+    public void setPolicyEndTime(String policyEndTime) {
         this.policyEndTime = policyEndTime;
     }
 
@@ -281,5 +278,13 @@ public class CardDetailModel4Wechat {
 
     public void setHolderRecognizeeRelation(String holderRecognizeeRelation) {
         this.holderRecognizeeRelation = holderRecognizeeRelation;
+    }
+
+    public String getPolicyNumber() {
+        return policyNumber;
+    }
+
+    public void setPolicyNumber(String policyNumber) {
+        this.policyNumber = policyNumber;
     }
 }

@@ -46,7 +46,7 @@ public class JavaSmsApi {
     public static void main(String[] args) throws IOException, URISyntaxException {
 
         //修改为您的apikey.apikey可在官网（http://www.yuanpian.com)登录后获取
-        String apikey = "35aa5ea1b9c54b687460b8b573b6ef7c";
+        String apikey = "f65fd97a75d76c6af4ed48d6b4400aea";
 
         //修改为您要发送的手机号
         String mobile = URLEncoder.encode("15606711230", ENCODING);
@@ -62,7 +62,8 @@ public class JavaSmsApi {
 
         /**************** 使用指定模板接口发短信(不推荐，建议使用智能匹配模版接口) *****************/
         //设置模板ID，如使用1号模板:【#company#】您的验证码是#code#
-        long tpl_id = 1612706;
+//        long tpl_id = 1612706;
+        long tpl_id = 2131854;
         //设置对应的模板变量值
         int code = (int) ((Math.random() * 9 + 1) * 100000);
         String tpl_value = String.format("#code#=%s", code);
